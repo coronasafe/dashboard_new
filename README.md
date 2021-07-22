@@ -1,4 +1,12 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# CoronaSafe Dashboard
+
+[![](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/images/0)](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/links/0)[![](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/images/1)](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/links/1)[![](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/images/2)](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/links/2)[![](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/images/3)](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/links/3)[![](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/images/4)](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/links/4)[![](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/images/5)](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/links/5)[![](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/images/6)](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/links/6)[![](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/images/7)](https://sourcerer.io/fame/tomahawk-pilot/coronasafe/dashboard/links/7)
+
+![CoronaSafe+War+Room+Home+Page+1](https://user-images.githubusercontent.com/14979190/118388552-e4f09180-b642-11eb-8a17-034e4e98c0c6.jpg)
+
+### Objective
+
+The dashboard presents actionable intel using data tracked by [coronasafe/care](https://github.com/coronasafe/care) to administrators in order to take decisions based on ground conditions
 
 ## Getting Started
 
@@ -17,18 +25,3 @@ You can start editing the page by modifying `pages/index.js`. The page auto-upda
 [API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
