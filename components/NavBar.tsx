@@ -2,7 +2,7 @@ import { Backdrop, Transition } from "@windmill/react-ui"
 import { useState } from "react"
 import HamburgerIcon from "./Icons/HamburgerIcon"
 import CoronaSafeIcon from "./Icons/CoronaSafeIcon"
-import Sidebar from "./Sidebar/Sidebar"
+import { Sidebar } from "./Sidebar"
 import Link from "next/link"
 
 interface NavBarProps {}

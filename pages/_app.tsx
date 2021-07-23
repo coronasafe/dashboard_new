@@ -5,7 +5,6 @@ import { Windmill } from "@windmill/react-ui"
 import NavBar from "../components/NavBar"
 
 import { SidebarProvider } from "../lib/hooks"
-import Sidebar from "../components/Sidebar"
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -31,7 +30,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <SidebarProvider>
         <NavBar />
-        <Sidebar />
         <Component {...pageProps} />
       </SidebarProvider>
     </Windmill>
