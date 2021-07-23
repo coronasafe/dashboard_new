@@ -250,6 +250,11 @@ arg@^5.0.0:
   resolved "https://registry.yarnpkg.com/arg/-/arg-5.0.0.tgz#a20e2bb5710e82950a516b3f933fee5ed478be90"
   integrity sha512-4P8Zm2H+BRS+c/xX1LrHw0qKpEhdlZjLCgWy+d78T9vqa2Z2SiD2wMrYuWIAFy5IZUD7nnNXroRttz+0RzlrzQ==
 
+arima@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/arima/-/arima-0.2.2.tgz#a86f283692cc16b57ba71a3d726041608bc0fd88"
+  integrity sha512-7/eKzbwCR/n//gWfqaOspPyJg16noF4OCMlqmqcPg1kugTwk0jWzVbIhsYAvm9HorViwsuD10fmS+ZU/MognTw==
+
 asn1.js@^5.2.0:
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/asn1.js/-/asn1.js-5.4.1.tgz#11a980b84ebb91781ce35b0fdc2ee294e3783f07"
@@ -626,6 +631,11 @@ colorette@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/colorette/-/colorette-1.2.2.tgz#cbcc79d5e99caea2dbf10eb3a26fd8b3e6acfa94"
   integrity sha512-MKGMzyfeuutC/ZJ1cba9NqcNpfeqMUcYmyF1ZFY6/Cn7CNSAKx6a+s48sqLqyAiZuaP2TcqMhoo+dlwFnVxT9w==
+
+comlink@^4.1.0:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/comlink/-/comlink-4.3.1.tgz#0c6b9d69bcd293715c907c33fe8fc45aecad13c5"
+  integrity sha512-+YbhUdNrpBZggBAHWcgQMLPLH1KDF3wJpeqrCKieWQ8RL7atmgsgTQko1XEBK6PsecfopWNntopJ+ByYG1lRaA==
 
 commander@^6.0.0:
   version "6.2.1"
@@ -2273,6 +2283,13 @@ react-refresh@0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.8.3.tgz#721d4657672d400c5e3c75d063c4a85fb2d5d68f"
   integrity sha512-X8jZHc7nCMjaCqoU+V2I0cOhNW+QMBwSUkeXnTi8IPe6zaRWfn60ZzvFDZqWPfmSJfjub7dDW1SP0jaHWLu/hg==
+
+react-suspense-worker@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/react-suspense-worker/-/react-suspense-worker-0.0.1.tgz#3d3415f72c9119f91d1e1f4ef6e0582d46b5aac8"
+  integrity sha512-hL3GdEuo3FbpQ08yxhbtxaKARh2fJOyBx0FaC+G9q/S8v12tFlNm1pLMZ4dKU+uZB7bswbbxnIBiuGcRYDdO7A==
+  dependencies:
+    comlink "^4.1.0"
 
 react-transition-group@4.4.1:
   version "4.4.1"
