@@ -1,2 +1,2 @@
 export const parameterize = (word: string) =>
-  word.toLowerCase().replaceAll(" ", "_");
+  word.toLowerCase().replaceAll(" ", "_")

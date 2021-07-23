@@ -1,14 +1,14 @@
-import { Backdrop, Transition } from "@windmill/react-ui";
-import { useState } from "react";
-import HamburgerIcon from "./Icons/HamburgerIcon";
-import CoronaSafeIcon from "./Icons/CoronaSafeIcon";
-import Sidebar from "./Sidebar/Sidebar";
-import Link from "next/link";
+import { Backdrop, Transition } from "@windmill/react-ui"
+import { useState } from "react"
+import HamburgerIcon from "./Icons/HamburgerIcon"
+import CoronaSafeIcon from "./Icons/CoronaSafeIcon"
+import Sidebar from "./Sidebar/Sidebar"
+import Link from "next/link"
 
 interface NavBarProps {}
 
 const NavBar: React.FunctionComponent<NavBarProps> = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
     <div className="flex items-center bg-white shadow-md h-12 px-5">
@@ -58,7 +58,7 @@ const NavBar: React.FunctionComponent<NavBarProps> = () => {
         </>
       </Transition>
     </div>
-  );
-};
+  )
+}
 
-export default NavBar;
+export default NavBar

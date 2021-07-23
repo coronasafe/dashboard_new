@@ -1,5 +1,5 @@
-import routes from "../../routes/Sidebar";
-import SidebarMenu from "./SidebarMenu";
+import routes from "../../routes/Sidebar"
+import SidebarMenu from "./SidebarMenu"
 
 export interface SidebarProps {}
 
@@ -10,7 +10,7 @@ const Sidebar: React.FunctionComponent<SidebarProps> = () => {
         <SidebarMenu key={route.name} {...route} />
       ))}
     </ul>
-  );
-};
+  )
+}
 
-export default Sidebar;
+export default Sidebar

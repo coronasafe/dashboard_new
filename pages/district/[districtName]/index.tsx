@@ -1,16 +1,16 @@
-import { useRouter } from "next/router";
-import Loader from "../../../components/Icons/LoaderIcon";
+import { useRouter } from "next/router"
+import Loader from "../../../components/Icons/LoaderIcon"
 
 export default function RedirectPage() {
-  const router = useRouter();
+  const router = useRouter()
 
-  const { districtName } = router.query;
+  const { districtName } = router.query
 
-  if (districtName) router.push(`/district/${districtName}/capacity`);
+  if (districtName) router.push(`/district/${districtName}/capacity`)
 
   return (
     <div>
       <Loader />
     </div>
-  );
+  )
 }

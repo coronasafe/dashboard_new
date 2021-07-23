@@ -1,8 +1,8 @@
-import { Menu, X } from "react-feather";
+import { Menu, X } from "react-feather"
 
 export interface HamburgerIconProps {
-  isOpen: boolean;
-  onClick?: () => void;
+  isOpen: boolean
+  onClick?: () => void
 }
 
 const HamburgerIcon: React.FunctionComponent<HamburgerIconProps> = ({
@@ -13,7 +13,7 @@ const HamburgerIcon: React.FunctionComponent<HamburgerIconProps> = ({
     <button className="cursor-pointer text-primary-700 focus:ring-2 rounded-sm">
       {isOpen ? <X onClick={onClick} /> : <Menu onClick={onClick} />}
     </button>
-  );
-};
+  )
+}
 
-export default HamburgerIcon;
+export default HamburgerIcon

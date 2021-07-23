@@ -1,15 +1,15 @@
-import { Transition } from "@windmill/react-ui";
-import { useState } from "react";
-import { ChevronDown } from "react-feather";
+import { Transition } from "@windmill/react-ui"
+import { useState } from "react"
+import { ChevronDown } from "react-feather"
 
 export interface SidebarDropdownMenuProps {
-  name: string;
-  routes: { name: string; path: string }[];
+  name: string
+  routes: { name: string; path: string }[]
 }
 
 const SidebarDropdownMenu: React.FunctionComponent<SidebarDropdownMenuProps> =
   ({ name, routes }) => {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
     return (
       <li className="relative px-6 py-3" key={name}>
@@ -54,7 +54,7 @@ const SidebarDropdownMenu: React.FunctionComponent<SidebarDropdownMenuProps> =
           </ul>
         </Transition>
       </li>
-    );
-  };
+    )
+  }
 
-export default SidebarDropdownMenu;
+export default SidebarDropdownMenu
