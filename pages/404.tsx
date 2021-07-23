@@ -1,9 +1,9 @@
-import React from "react";
-import { useRouter } from "next/router";
-import { XOctagon } from "react-feather";
+import React from "react"
+import { useRouter } from "next/router"
+import { XOctagon } from "react-feather"
 
 const Page404 = () => {
-  const router = useRouter();
+  const router = useRouter()
 
   return (
     <div className="flex flex-col items-center">
@@ -26,7 +26,7 @@ const Page404 = () => {
         .
       </p>
     </div>
-  );
-};
+  )
+}
 
-export default Page404;
+export default Page404
