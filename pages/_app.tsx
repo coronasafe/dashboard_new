@@ -2,7 +2,7 @@ import "../styles/globals.css"
 import Head from "next/head"
 import type { AppProps } from "next/app"
 import { Windmill } from "@windmill/react-ui"
-import Header from "../components/Header"
+import NavBar from "../components/NavBar"
 
 import { SidebarProvider } from "../lib/hooks"
 import Sidebar from "../components/Sidebar"
@@ -30,7 +30,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>Care Dashboard</title>
       </Head>
       <SidebarProvider>
-        <Header />
+        <NavBar />
         <Sidebar />
         <Component {...pageProps} />
       </SidebarProvider>
