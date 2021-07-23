@@ -1,4 +1,4 @@
-import { ACTIVATED_DISTRICTS } from "../config"
+import { ACTIVATED_DISTRICTS } from "../lib/common/constants"
 import { parameterize } from "../utils/parser"
 
 const routes = [

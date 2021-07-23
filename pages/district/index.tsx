@@ -1,5 +1,5 @@
 import { useRouter } from "next/router"
-import Loader from "../../../components/Icons/LoaderIcon"
+import Loader from "../../lib/assets/icons/LoaderIcon"
 
 export default function RedirectPage() {
   const router = useRouter()
