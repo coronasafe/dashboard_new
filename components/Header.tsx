@@ -3,13 +3,13 @@ import { useRouter } from "next/router"
 import { Menu, Moon, Sun } from "react-feather"
 import { WindmillContext } from "@windmill/react-ui"
 
-// import { SidebarContext } from "../context/SidebarContext";
+import { SidebarContext } from "../lib/hooks"
 
 function Header() {
   const router = useRouter()
 
   const { mode, toggleMode } = useContext(WindmillContext)
-  // const { toggleSidebar } = useContext(SidebarContext);
+  const { toggleSidebar } = useContext(SidebarContext)
 
   return (
     <header className="z-40 py-2 h-12 dark:bg-gray-800 bg-white shadow-md overflow-hidden">
@@ -18,7 +18,7 @@ function Header() {
           <button
             type="button"
             className="focus:shadow-outline-primary mr-2 p-1 rounded-md focus:outline-none md:mr-6"
-            // onClick={toggleSidebar}
+            onClick={() => toggleSidebar()}
             aria-label="Menu"
           >
             <Menu className="w-5 h-5" aria-hidden="true" />
