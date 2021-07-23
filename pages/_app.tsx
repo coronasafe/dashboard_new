@@ -2,10 +2,11 @@ import "../styles/globals.css";
 import Head from "next/head";
 import type { AppProps } from "next/app";
 import { Windmill } from "@windmill/react-ui";
+import Header from "../components/Header";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Windmill>
+    <Windmill usePreferences>
       <Head>
         <meta charSet="utf-8" />
         <link
@@ -25,6 +26,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="manifest" href="/manifest.json" />
         <title>Care Dashboard</title>
       </Head>
+      <Header />
       <Component {...pageProps} />
     </Windmill>
   );
