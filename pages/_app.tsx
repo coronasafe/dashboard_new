@@ -4,6 +4,9 @@ import type { AppProps } from "next/app"
 import { Windmill } from "@windmill/react-ui"
 import Header from "../components/Header"
 
+import { SidebarProvider } from "../lib/hooks"
+import Sidebar from "../components/Sidebar"
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Windmill usePreferences>
@@ -26,8 +29,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="manifest" href="/manifest.json" />
         <title>Care Dashboard</title>
       </Head>
-      <Header />
-      <Component {...pageProps} />
+      <SidebarProvider>
+        <Header />
+        <Sidebar />
+        <Component {...pageProps} />
+      </SidebarProvider>
     </Windmill>
   )
 }
