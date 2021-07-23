@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Button } from "@windmill/react-ui"
 import { Card, CardBody } from "@windmill/react-ui"
-import { ACTIVATED_DISTRICTS } from "../utils/constants"
+import { ACTIVATED_DISTRICTS } from "../lib/common/constants"
 
 export default function Home() {
   return (

@@ -1,4 +1,4 @@
-import { OXYGEN_INVENTORY } from "./constants"
+import { OXYGEN_INVENTORY } from "../lib/common/constants"
 
 export const getNDateBefore = (d: Date, n: number) => {
   const dt = new Date(d)
