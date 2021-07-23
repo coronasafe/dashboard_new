@@ -2,6 +2,7 @@ import "../styles/globals.css";
 import Head from "next/head";
 import type { AppProps } from "next/app";
 import { Windmill } from "@windmill/react-ui";
+import NavBar from "../components/NavBar";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -25,6 +26,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="manifest" href="/manifest.json" />
         <title>Care Dashboard</title>
       </Head>
+      <NavBar />
       <Component {...pageProps} />
     </Windmill>
   );
