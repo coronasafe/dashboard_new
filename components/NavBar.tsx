@@ -1,6 +1,7 @@
-import { Backdrop, Transition } from "@windmill/react-ui"
-import { useState } from "react"
+import { Backdrop, Transition, WindmillContext } from "@windmill/react-ui"
+import { useContext, useState } from "react"
 import HamburgerIcon from "../lib/assets/icons/HamburgerIcon"
+import { Menu, Moon, Sun } from "react-feather"
 import CoronaSafeIcon from "../lib/assets/icons/CoronaSafeLogo"
 import { Sidebar } from "./Sidebar"
 import Link from "next/link"
@@ -9,9 +10,10 @@ interface NavBarProps {}
 
 const NavBar: React.FunctionComponent<NavBarProps> = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const { mode, toggleMode } = useContext(WindmillContext)
 
   return (
-    <div className="flex items-center bg-white shadow-md h-12 px-5">
+    <div className="flex items-center bg-white dark:bg-gray-800 shadow-md h-12 px-5">
       <HamburgerIcon
         isOpen={isOpen}
         onClick={() => setIsOpen((prev) => !prev)}
@@ -28,8 +30,21 @@ const NavBar: React.FunctionComponent<NavBarProps> = () => {
         </button>
       </Link>
 
-      <div className="ml-auto">
-        <CoronaSafeIcon />
+      <div className="ml-auto flex">
+        <div>
+          <CoronaSafeIcon className="w-24 mr-4" />
+        </div>
+        <button
+          className="focus:shadow-outline-primary p-1 rounded-md focus:outline-none"
+          onClick={toggleMode}
+          aria-label="Toggle color mode"
+        >
+          {mode === "dark" ? (
+            <Sun className={`w-5 h-5`} color="yellow" aria-hidden="true" />
+          ) : (
+            <Moon className={`w-5 h-5`} aria-hidden="true" />
+          )}
+        </button>
       </div>
 
       <Transition show={isOpen}>

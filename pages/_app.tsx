@@ -5,10 +5,11 @@ import { Windmill } from "@windmill/react-ui"
 import NavBar from "../components/NavBar"
 
 import { SidebarProvider } from "../lib/hooks"
+import theme from "../utils/theme"
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Windmill usePreferences>
+    <Windmill usePreferences theme={theme}>
       <Head>
         <meta charSet="utf-8" />
         <link

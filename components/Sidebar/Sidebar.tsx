@@ -8,7 +8,7 @@ const hoverClassName = "hover:text-gray-900 dark:hover:text-gray-300"
 
 const Sidebar: React.FunctionComponent<SidebarProps> = () => {
   return (
-    <ul className="bg-white fixed flex flex-col justify-between inset-0 z-50 py-4 min-h-full top-12 w-full max-w-xs dark:text-gray-400 text-gray-500">
+    <ul className="bg-white dark:bg-black fixed flex flex-col justify-between inset-0 z-50 py-4 min-h-full top-12 w-full max-w-xs dark:text-gray-400 text-gray-500">
       <div>
         {routes.map((route) => (
           <SidebarMenu key={route.name} {...route} />
