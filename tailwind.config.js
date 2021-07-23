@@ -1,8 +1,8 @@
-const windmill = require('@windmill/react-ui/config')
-const defaultTheme = require("tailwindcss/defaultTheme")
+const windmill = require("@windmill/react-ui/config");
+const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = windmill({
-  purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+  purge: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   darkMode: false,
   theme: {
     extend: {
@@ -39,4 +39,4 @@ module.exports = windmill({
     extend: {},
   },
   plugins: [],
-})
+});
