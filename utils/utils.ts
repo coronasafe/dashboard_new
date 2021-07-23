@@ -1,20 +1,20 @@
-import { OXYGEN_INVENTORY } from "./constants";
+import { OXYGEN_INVENTORY } from "./constants"
 
 export const getNDateBefore = (d: Date, n: number) => {
-  const dt = new Date(d);
-  return new Date(dt.setDate(dt.getDate() - n));
-};
+  const dt = new Date(d)
+  return new Date(dt.setDate(dt.getDate() - n))
+}
 
 export const getNDateAfter = (d: Date, n: number) => {
-  const dt = new Date(d);
-  return new Date(dt.setDate(dt.getDate() + n));
-};
+  const dt = new Date(d)
+  return new Date(dt.setDate(dt.getDate() + n))
+}
 
 export const dateString = (d: Date) => {
   return `${d.getFullYear()}-${`0${d.getMonth() + 1}`.slice(
-    -2
-  )}-${`0${d.getDate()}`.slice(-2)}`;
-};
+    -2,
+  )}-${`0${d.getDate()}`.slice(-2)}`
+}
 
 // TODO: Write types
 const timeToEmpty = (inventoryItem: any) => {
@@ -24,14 +24,14 @@ const timeToEmpty = (inventoryItem: any) => {
     inventoryItem.burn_rate !== undefined &&
     Math.round(inventoryItem.burn_rate ?? 0) !== 0
     ? (inventoryItem?.stock / inventoryItem?.burn_rate).toFixed(2)
-    : -1;
-};
+    : -1
+}
 
 // TODO: Write types
 export const processFacilities = (
   data: any,
   filterFacilityTypes: any,
-  orderBy: any
+  orderBy: any,
 ) => {
   return (
     data
@@ -54,7 +54,7 @@ export const processFacilities = (
           data.availability && data.availability.length !== 0
             ? Math.max(
                 // TODO: Write types
-                ...data.availability.map((a: any) => new Date(a.modified_date))
+                ...data.availability.map((a: any) => new Date(a.modified_date)),
               )
             : data.modified_date || modified_date,
         inventoryModifiedDate:
@@ -63,8 +63,8 @@ export const processFacilities = (
                 // @ts-ignore FIX THIS
                 ...Object.values(data.inventory).map(
                   // TODO: Write types
-                  (a: any) => new Date(a.modified_date)
-                )
+                  (a: any) => new Date(a.modified_date),
+                ),
               )
             : data.modified_date || modified_date,
 
@@ -76,7 +76,7 @@ export const processFacilities = (
                     return {
                       ...cAcc,
                       [cCur.room_type]: cCur,
-                    };
+                    }
                   }, {})
                 : null,
               oxygenCapacity: data.oxygen_capacity,
@@ -91,23 +91,23 @@ export const processFacilities = (
               actualLivePatients: data.actual_live_patients,
               tte_tank: Number(
                 timeToEmpty(
-                  data.inventory && data.inventory[OXYGEN_INVENTORY.liquid]
-                ) || -1
+                  data.inventory && data.inventory[OXYGEN_INVENTORY.liquid],
+                ) || -1,
               ),
               tte_d_cylinders: Number(
                 timeToEmpty(
-                  data.inventory && data.inventory[OXYGEN_INVENTORY.type_d]
-                ) || -1
+                  data.inventory && data.inventory[OXYGEN_INVENTORY.type_d],
+                ) || -1,
               ),
               tte_c_cylinders: Number(
                 timeToEmpty(
-                  data.inventory && data.inventory[OXYGEN_INVENTORY.type_c]
-                ) || -1
+                  data.inventory && data.inventory[OXYGEN_INVENTORY.type_c],
+                ) || -1,
               ),
               tte_b_cylinders: Number(
                 timeToEmpty(
-                  data.inventory && data.inventory[OXYGEN_INVENTORY.type_b]
-                ) || -1
+                  data.inventory && data.inventory[OXYGEN_INVENTORY.type_b],
+                ) || -1,
               ),
             }
           : {
@@ -117,11 +117,11 @@ export const processFacilities = (
       .filter((f: any) => filterFacilityTypes.includes(f.facilityType))
       // TODO: Write types and make variable names clear
       .reduce((acc: any, f: any, i: any, arr: any) => {
-        const zero = acc?.zero || acc;
-        const nonZero = acc?.nonZero || acc;
-        let returnable;
+        const zero = acc?.zero || acc
+        const nonZero = acc?.nonZero || acc
+        let returnable
         if (arr.length === 1) {
-          return arr;
+          return arr
         }
         if (
           orderBy
@@ -129,9 +129,9 @@ export const processFacilities = (
               Number(f[orderBy.selector]) < Infinity
             : true
         ) {
-          returnable = { zero, nonZero: [...nonZero, f] };
+          returnable = { zero, nonZero: [...nonZero, f] }
         } else {
-          returnable = { nonZero, zero: [...zero, f] };
+          returnable = { nonZero, zero: [...zero, f] }
         }
         if (arr.length - 1 === i) {
           return [
@@ -143,12 +143,12 @@ export const processFacilities = (
                   : -1 * Number(orderBy.order)
                 : new Date(a.modifiedDate) < new Date(b.modifiedDate)
                 ? 1
-                : -1;
+                : -1
             }),
             ...zero,
-          ];
+          ]
         }
-        return returnable;
+        return returnable
       }, [])
-  );
-};
+  )
+}

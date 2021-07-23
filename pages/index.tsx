@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { Button } from "@windmill/react-ui";
-import { Card, CardBody } from "@windmill/react-ui";
-import { ACTIVATED_DISTRICTS } from "../utils/constants";
+import Link from "next/link"
+import { Button } from "@windmill/react-ui"
+import { Card, CardBody } from "@windmill/react-ui"
+import { ACTIVATED_DISTRICTS } from "../utils/constants"
 
 export default function Home() {
   return (
@@ -23,5 +23,5 @@ export default function Home() {
         </CardBody>
       </Card>
     </div>
-  );
+  )
 }

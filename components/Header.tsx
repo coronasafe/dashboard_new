@@ -1,14 +1,14 @@
-import { useContext } from "react";
-import { useRouter } from "next/router";
-import { Menu, Moon, Sun } from "react-feather";
-import { WindmillContext } from "@windmill/react-ui";
+import { useContext } from "react"
+import { useRouter } from "next/router"
+import { Menu, Moon, Sun } from "react-feather"
+import { WindmillContext } from "@windmill/react-ui"
 
 // import { SidebarContext } from "../context/SidebarContext";
 
 function Header() {
-  const router = useRouter();
+  const router = useRouter()
 
-  const { mode, toggleMode } = useContext(WindmillContext);
+  const { mode, toggleMode } = useContext(WindmillContext)
   // const { toggleSidebar } = useContext(SidebarContext);
 
   return (
@@ -77,7 +77,7 @@ function Header() {
         </div>
       </div>
     </header>
-  );
+  )
 }
 
-export default Header;
+export default Header

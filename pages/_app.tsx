@@ -1,8 +1,8 @@
-import "../styles/globals.css";
-import Head from "next/head";
-import type { AppProps } from "next/app";
-import { Windmill } from "@windmill/react-ui";
-import Header from "../components/Header";
+import "../styles/globals.css"
+import Head from "next/head"
+import type { AppProps } from "next/app"
+import { Windmill } from "@windmill/react-ui"
+import Header from "../components/Header"
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -29,7 +29,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Header />
       <Component {...pageProps} />
     </Windmill>
-  );
+  )
 }
 
-export default MyApp;
+export default MyApp
