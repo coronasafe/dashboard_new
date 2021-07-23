@@ -6,7 +6,7 @@ import NavBar from "../components/NavBar";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Windmill>
+    <Windmill usePreferences>
       <Head>
         <meta charSet="utf-8" />
         <link
