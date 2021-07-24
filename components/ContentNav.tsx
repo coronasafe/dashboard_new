@@ -15,8 +15,6 @@ const ContentNav = () => {
   const currentContent = router.pathname.split("/")[3];
   const districtName = GetDistrictName(router.query.districtName);
 
-  console.log(router.pathname.split("/"));
-
   return (
     <div>
       <PageTitle text="District Dashboard" />
