@@ -1,10 +1,10 @@
-import CoronaSafeLogo from "../../lib/assets/icons/CoronaSafeLogo"
-import routes from "../../routes/Sidebar"
-import SidebarMenu from "./SidebarMenu"
+import CoronaSafeLogo from "../../lib/assets/icons/CoronaSafeLogo";
+import routes from "../../routes/Sidebar";
+import SidebarMenu from "./SidebarMenu";
 
 export interface SidebarProps {}
 
-const hoverClassName = "hover:text-gray-900 dark:hover:text-gray-300"
+const hoverClassName = "hover:text-gray-900 dark:hover:text-gray-300";
 
 const Sidebar: React.FunctionComponent<SidebarProps> = () => {
   return (
@@ -62,7 +62,7 @@ const Sidebar: React.FunctionComponent<SidebarProps> = () => {
         </a>
       </div>
     </ul>
-  )
-}
+  );
+};
 
-export { Sidebar }
+export { Sidebar };

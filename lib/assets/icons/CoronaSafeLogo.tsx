@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 
 const CoronaSafeLogo: React.FC<any> = (props) => {
   return (
@@ -26,7 +26,7 @@ const CoronaSafeLogo: React.FC<any> = (props) => {
         />
       </defs>
     </svg>
-  )
-}
+  );
+};
 
-export default CoronaSafeLogo
+export default CoronaSafeLogo;

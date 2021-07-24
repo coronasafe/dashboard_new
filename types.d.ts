@@ -1,1 +1,1 @@
-declare module "arima"
+declare module "arima";

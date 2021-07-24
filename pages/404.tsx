@@ -1,8 +1,8 @@
-import React from "react"
-import { useRouter } from "next/router"
+import React from "react";
+import { useRouter } from "next/router";
 
 const Page404 = () => {
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <div
@@ -24,7 +24,7 @@ const Page404 = () => {
         Go back
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default Page404
+export default Page404;

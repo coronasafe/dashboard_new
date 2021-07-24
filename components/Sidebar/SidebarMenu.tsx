@@ -1,9 +1,9 @@
-import SidebarDropdownMenu from "./SidebarDropDownMenu"
+import SidebarDropdownMenu from "./SidebarDropDownMenu";
 
 export interface SidebarMenuProps {
-  name: string
-  href?: string
-  routes?: { name: string; path: string }[]
+  name: string;
+  href?: string;
+  routes?: { name: string; path: string }[];
 }
 
 const SidebarMenu: React.FunctionComponent<SidebarMenuProps> = ({
@@ -11,7 +11,7 @@ const SidebarMenu: React.FunctionComponent<SidebarMenuProps> = ({
   href,
   routes,
 }) => {
-  if (routes) return <SidebarDropdownMenu name={name} routes={routes} />
+  if (routes) return <SidebarDropdownMenu name={name} routes={routes} />;
 
   return (
     <li className="relative px-6 py-3" key={name}>
@@ -22,7 +22,7 @@ const SidebarMenu: React.FunctionComponent<SidebarMenuProps> = ({
         <span className="ml-4">{name}</span>
       </a>
     </li>
-  )
-}
+  );
+};
 
-export default SidebarMenu
+export default SidebarMenu;

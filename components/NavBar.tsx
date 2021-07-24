@@ -1,16 +1,16 @@
-import { Backdrop, Transition, WindmillContext } from "@windmill/react-ui"
-import { useContext, useState } from "react"
-import HamburgerIcon from "../lib/assets/icons/HamburgerIcon"
-import { Menu, Moon, Sun } from "react-feather"
-import CoronaSafeIcon from "../lib/assets/icons/CoronaSafeLogo"
-import { Sidebar } from "./Sidebar"
-import Link from "next/link"
+import { Backdrop, Transition, WindmillContext } from "@windmill/react-ui";
+import { useContext, useState } from "react";
+import HamburgerIcon from "../lib/assets/icons/HamburgerIcon";
+import { Menu, Moon, Sun } from "react-feather";
+import CoronaSafeIcon from "../lib/assets/icons/CoronaSafeLogo";
+import { Sidebar } from "./Sidebar";
+import Link from "next/link";
 
 interface NavBarProps {}
 
 const NavBar: React.FunctionComponent<NavBarProps> = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const { mode, toggleMode } = useContext(WindmillContext)
+  const [isOpen, setIsOpen] = useState(false);
+  const { mode, toggleMode } = useContext(WindmillContext);
 
   return (
     <div className="flex items-center bg-white dark:bg-gray-800 shadow-md h-12 px-5">
@@ -73,7 +73,7 @@ const NavBar: React.FunctionComponent<NavBarProps> = () => {
         </>
       </Transition>
     </div>
-  )
-}
+  );
+};
 
-export default NavBar
+export default NavBar;

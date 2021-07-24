@@ -1,8 +1,8 @@
-import Link from "next/link"
-import { Button } from "@windmill/react-ui"
-import { Card, CardBody } from "@windmill/react-ui"
-import { ACTIVATED_DISTRICTS } from "../lib/common/constants"
-import { parameterize } from "../utils/parser"
+import Link from "next/link";
+import { Button } from "@windmill/react-ui";
+import { Card, CardBody } from "@windmill/react-ui";
+import { ACTIVATED_DISTRICTS } from "../lib/common/constants";
+import { parameterize } from "../utils/parser";
 
 export default function Home() {
   return (
@@ -22,5 +22,5 @@ export default function Home() {
         </CardBody>
       </Card>
     </div>
-  )
+  );
 }

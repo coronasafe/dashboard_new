@@ -1,11 +1,11 @@
-import "../styles/globals.css"
-import Head from "next/head"
-import type { AppProps } from "next/app"
-import { Windmill } from "@windmill/react-ui"
-import NavBar from "../components/NavBar"
+import "../styles/globals.css";
+import Head from "next/head";
+import type { AppProps } from "next/app";
+import { Windmill } from "@windmill/react-ui";
+import NavBar from "../components/NavBar";
 
-import { SidebarProvider } from "../lib/hooks"
-import theme from "../utils/theme"
+import { SidebarProvider } from "../lib/hooks";
+import theme from "../utils/theme";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -34,7 +34,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
       </SidebarProvider>
     </Windmill>
-  )
+  );
 }
 
-export default MyApp
+export default MyApp;

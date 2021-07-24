@@ -1,5 +1,5 @@
-import { ACTIVATED_DISTRICTS } from "../lib/common/constants"
-import { parameterize } from "../utils/parser"
+import { ACTIVATED_DISTRICTS } from "../lib/common/constants";
+import { parameterize } from "../utils/parser";
 
 const routes = [
   {
@@ -21,6 +21,6 @@ const routes = [
     href: "https://kerala.coronasafe.network/hotspots",
     name: "Kerala Dashboard: Hotspots",
   },
-]
+];
 
-export default routes
+export default routes;

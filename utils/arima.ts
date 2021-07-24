@@ -1,6 +1,6 @@
-import arima from "arima"
-import { expose } from "react-suspense-worker"
+import arima from "arima";
+import { expose } from "react-suspense-worker";
 
-const arimaWorker = arima
+const arimaWorker = arima;
 
-expose(arimaWorker)
+expose(arimaWorker);

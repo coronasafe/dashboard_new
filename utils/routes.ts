@@ -36,6 +36,6 @@ const routes = [
     href: "https://kerala.coronasafe.network/hotspots",
     name: "Kerala Dashboard: Hotspots",
   },
-]
+];
 
-export default routes
+export default routes;
