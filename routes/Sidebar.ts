@@ -1,12 +1,12 @@
 import { ACTIVATED_DISTRICTS } from "../lib/common/constants";
-import { parameterize } from "../utils/parser";
+import { Parameterize } from "../utils/parser";
 
 const routes = [
   {
     name: "District Dashboard",
     routes: ACTIVATED_DISTRICTS.map(({ name }) => ({
       name: name,
-      path: `/district/${parameterize(name)}/capacity`,
+      path: `/district/${Parameterize(name)}/capacity`,
     })),
   },
   {

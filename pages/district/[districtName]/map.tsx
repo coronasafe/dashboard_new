@@ -1,15 +1,15 @@
 import { useRouter } from "next/router";
-import PageTitle from "../../../components/Typography/PageTitle";
-import { Humanize } from "../../../utils/parser";
+import ContentNav from "../../../components/ContentNav";
+import { GetDistrictName } from "../../../utils/parser";
 
 const Map = () => {
   const router = useRouter();
 
+  const districtName = GetDistrictName(router.query.districtName);
+
   return (
     <div className="container mx-auto px-4">
-      <PageTitle
-        text={"Map - " + Humanize(router.query.districtName as string)}
-      ></PageTitle>
+      <ContentNav />
     </div>
   );
 };
