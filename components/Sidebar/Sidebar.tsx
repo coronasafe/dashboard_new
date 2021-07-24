@@ -4,9 +4,7 @@ import SidebarMenu from "./SidebarMenu";
 
 export interface SidebarProps {}
 
-const hoverClassName = "hover:text-gray-900 dark:hover:text-gray-300";
-
-const Sidebar: React.FunctionComponent<SidebarProps> = () => {
+const Sidebar: React.FC<SidebarProps> = () => {
   return (
     <ul className="bg-white dark:bg-black fixed flex flex-col justify-between inset-0 z-50 py-4 min-h-full top-12 w-full max-w-xs dark:text-gray-400 text-gray-500">
       <div>
@@ -20,7 +18,7 @@ const Sidebar: React.FunctionComponent<SidebarProps> = () => {
             <a
               target="_blank"
               href="https://github.com/coronasafe/dashboard"
-              className={hoverClassName}
+              className="hover:text-gray-900 dark:hover:text-gray-300"
             >
               Github
             </a>
@@ -29,7 +27,7 @@ const Sidebar: React.FunctionComponent<SidebarProps> = () => {
             <a
               target="_blank"
               href="https://github.com/coronasafe/dashboard/issues"
-              className={hoverClassName}
+              className="hover:text-gray-900 dark:hover:text-gray-300"
             >
               Issues
             </a>
@@ -40,7 +38,7 @@ const Sidebar: React.FunctionComponent<SidebarProps> = () => {
             <a
               target="_blank"
               href="https://coronasafe.network/volunteer"
-              className={hoverClassName}
+              className="hover:text-gray-900 dark:hover:text-gray-300"
             >
               Volunteer
             </a>

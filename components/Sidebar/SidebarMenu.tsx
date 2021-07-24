@@ -6,11 +6,7 @@ export interface SidebarMenuProps {
   routes?: { name: string; path: string }[];
 }
 
-const SidebarMenu: React.FunctionComponent<SidebarMenuProps> = ({
-  name,
-  href,
-  routes,
-}) => {
+const SidebarMenu: React.FC<SidebarMenuProps> = ({ name, href, routes }) => {
   if (routes) return <SidebarDropdownMenu name={name} routes={routes} />;
 
   return (
