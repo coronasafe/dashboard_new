@@ -6,7 +6,7 @@ const routes = [
     name: "District Dashboard",
     routes: ACTIVATED_DISTRICTS.map(({ name }) => ({
       name: name,
-      path: `/district/${parameterize(name)}`,
+      path: `/district/${parameterize(name)}/capacity`,
     })),
   },
   {
