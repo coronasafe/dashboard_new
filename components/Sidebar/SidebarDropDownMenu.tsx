@@ -44,10 +44,10 @@ const SidebarDropdownMenu: React.FC<SidebarDropdownMenuProps> = ({
           className="bg-gray-50 mt-2 dark:text-gray-400 text-gray-500 text-sm font-medium dark:bg-gray-900 rounded-md shadow-inner overflow-hidden space-y-2"
           aria-label="submenu"
         >
-          {routes.map(({ name, path }) => (
+          {routes.map(({ name, path }, key) => (
             <li
-              className="dark:hover:text-gray-200 hover:bg-gray-100 p-2 hover:text-gray-800 transition-colors duration-150 w-full"
-              key={name}
+              className="dark:hover:text-gray-200 px-2 py-1 hover:text-gray-800 transition-colors duration-150"
+              key={key}
             >
               <Link href={path}>
                 <a className="w-full block rounded-sm px-2 py-1">{name}</a>
