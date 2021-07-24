@@ -6,7 +6,7 @@ import { parameterize } from "../utils/parser";
 
 export default function Home() {
   return (
-    <div className="conainer mx-auto px-4">
+    <div className="container mx-auto px-4">
       <Card className="m-10">
         <CardBody>
           <h1 className="text-4xl">CoronaSafe</h1>

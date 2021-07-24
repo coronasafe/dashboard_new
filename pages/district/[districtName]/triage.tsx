@@ -1,11 +1,15 @@
 import { useRouter } from "next/router";
+import { Humanize } from "../../../utils/parser";
+import PageTitle from "../../../components/Typography/PageTitle";
 
 const Triage = () => {
   const router = useRouter();
 
   return (
-    <div className="conainer mx-auto px-4">
-      <h1 className="text-4xl pt-10">Triage - {router.query.districtName}</h1>
+    <div className="container mx-auto px-4">
+      <PageTitle
+        text={"Triage - " + Humanize(router.query.districtName as string)}
+      ></PageTitle>
     </div>
   );
 };
