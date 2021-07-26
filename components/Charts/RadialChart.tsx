@@ -1,4 +1,5 @@
 import React from "react";
+import clsx from "classnames";
 import { ArrowDown, ArrowUp } from "react-feather";
 import { animated, config, useSpring } from "react-spring";
 
@@ -26,6 +27,8 @@ export const RadialCard: React.FC<RadialCardProps> = ({
 
   const _p = Math.round((current.used / current.total) * 100);
 
+  const isPositive = (value: number) =>
+    !Number.isNaN(value) && value !== 0 && value > 0;
   const { used, total, progress, innerProgress } = useSpring({
     from: { used: 0, total: 0, progress: "0, 100", innerProgress: 0 },
     to: {
@@ -67,24 +70,23 @@ export const RadialCard: React.FC<RadialCardProps> = ({
           <div className="absolute inline-flex flex-col items-center justify-center self-center w-3/5 text-center text-sm xl:text-lg">
             <div className="space-x-1">
               <animated.span className="text-center text-4xl dark:text-gray-200 text-gray-700 font-semibold">
-                {innerProgress.to((x) => `${Math.round(x)}%`)}
+                {innerProgress.to((x: number) => `${Math.round(x)}%`)}
               </animated.span>
             </div>
             <div className="mt-2 text-center">
-              {count > 0 &&
-                !Number.isNaN(diff) &&
-                diff !== 0 &&
-                (diff > 0 ? (
-                  <span className="text-red-600 dark:text-red-500 text-xl font-medium">
-                    <ArrowUp className="inline h-full" />
-                    {Math.abs(diff)}%
-                  </span>
+              <span
+                className={clsx("text-xl font-medium", {
+                  "text-green-600 dark:text-green-400": isPositive(diff),
+                  "text-red-600 dark:text-red-500": !isPositive(diff),
+                })}
+              >
+                {isPositive(diff) ? (
+                  <ArrowUp className="inline h-full" />
                 ) : (
-                  <span className="text-green-600 dark:text-green-400 text-xl font-medium">
-                    <ArrowDown className="inline h-full" />
-                    {Math.abs(diff)}%
-                  </span>
-                ))}
+                  <ArrowDown className="inline h-full" />
+                )}
+                {Math.abs(diff)}%
+              </span>
             </div>
           </div>
         </div>
@@ -94,7 +96,7 @@ export const RadialCard: React.FC<RadialCardProps> = ({
           <p className="dark:text-gray-400 text-gray-500 font-medium text-sm xl:text-xl">
             Used
             <animated.span className="ml-2 dark:text-gray-200 text-gray-700 font-semibold text-xs  xl:text-lg">
-              {used.to((x) => Math.round(x))}
+              {used.to((x: number) => Math.round(x))}
             </animated.span>
           </p>
         </div>
@@ -102,7 +104,7 @@ export const RadialCard: React.FC<RadialCardProps> = ({
           <p className="dark:text-gray-400 text-gray-500 font-medium text-sm xl:text-xl">
             Total
             <animated.span className="ml-2 dark:text-gray-200 text-gray-700 text-xs font-semibold xl:text-lg">
-              {total.to((x) => Math.round(x))}
+              {total.to((x: number) => Math.round(x))}
             </animated.span>
           </p>
         </div>
