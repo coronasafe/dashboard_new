@@ -1,6 +1,5 @@
-import { Card } from "@windmill/react-ui";
 import React from "react";
-import { ChevronsDown, ChevronsUp } from "react-feather";
+import { ArrowDown, ArrowUp } from "react-feather";
 import { animated, config, useSpring } from "react-spring";
 
 type usedTotal = {
@@ -42,68 +41,73 @@ export const RadialCard: React.FC<RadialCardProps> = ({
   const circlePath = `M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831`;
 
   return (
-    <Card className="flex items-center justify-between">
-      <div className="relative flex content-center justify-center m-2 w-4/5">
-        <svg viewBox="0 0 36 36" className="w-4/5">
-          <path
-            className="text-gray-100 dark:text-gray-400 stroke-current stroke-2"
-            fill="none"
-            d={circlePath}
-          />
-          <animated.path
-            className="text-green-500 stroke-current stroke-2"
-            fill="none"
-            strokeDasharray={progress}
-            d={circlePath}
-          />
-        </svg>
-        <div className="absolute inline-flex flex-col items-center self-center w-3/5 text-center text-sm xl:text-lg">
-          <p className="text-center dark:text-gray-400 text-gray-600 text-xxs font-medium xl:text-xs">
-            {label}
-          </p>
-          <div className="space-x-1">
-            <animated.span className="text-center dark:text-gray-200 text-gray-700 font-semibold">
-              {innerProgress.interpolate((x) => `${Math.round(x)}%`)}
-            </animated.span>
-            {count > 0 &&
-              !Number.isNaN(diff) &&
-              diff !== 0 &&
-              (diff > 0 ? (
-                <span className="text-red-400">
-                  <ChevronsUp className="inline h-full" />
-                  {Math.abs(diff)}%
-                </span>
-              ) : (
-                <span className="text-green-400">
-                  <ChevronsDown className="inline h-full" />
-                  {Math.abs(diff)}%
-                </span>
-              ))}
+    <div
+      className="bg-white shadow-sm dark:shadow-none dark:bg-black rounded-xl"
+      style={{ padding: "clamp(1rem,5vw,2rem)" }}
+    >
+      <p className="dark:text-gray-100 text-gray-900 font-medium text-xl mb-2 md:mb-4 text-center">
+        {label}
+      </p>
+
+      <div className="flex items-center justify-center">
+        <div className="relative flex content-center justify-center m-2 w-4/5">
+          <svg viewBox="0 0 36 36" className="w-full">
+            <path
+              className="text-gray-200 dark:text-gray-800 stroke-current stroke-2"
+              fill="none"
+              d={circlePath}
+            />
+            <animated.path
+              className="text-primary-500 stroke-current stroke-2"
+              fill="none"
+              strokeDasharray={progress}
+              d={circlePath}
+            />
+          </svg>
+          <div className="absolute inline-flex flex-col items-center justify-center self-center w-3/5 text-center text-sm xl:text-lg">
+            <div className="space-x-1">
+              <animated.span className="text-center text-4xl dark:text-gray-200 text-gray-700 font-semibold">
+                {innerProgress.to((x) => `${Math.round(x)}%`)}
+              </animated.span>
+            </div>
+            <div className="mt-2 text-center">
+              {count > 0 &&
+                !Number.isNaN(diff) &&
+                diff !== 0 &&
+                (diff > 0 ? (
+                  <span className="text-red-600 dark:text-red-500 text-xl font-medium">
+                    <ArrowUp className="inline h-full" />
+                    {Math.abs(diff)}%
+                  </span>
+                ) : (
+                  <span className="text-green-600 dark:text-green-400 text-xl font-medium">
+                    <ArrowDown className="inline h-full" />
+                    {Math.abs(diff)}%
+                  </span>
+                ))}
+            </div>
           </div>
         </div>
       </div>
-      <div
-        style={{ direction: "rtl" }}
-        className="grid grid-cols-1 mr-4 w-1/4 text-right space-y-1 xl:space-y-2"
-      >
-        <div className="flex-col">
-          <p className="dark:text-gray-400 text-gray-600 text-xs font-medium xl:text-sm">
+      <div className="flex text-center mt-4">
+        <div className="w-1/2">
+          <p className="dark:text-gray-400 text-gray-500 font-medium text-sm xl:text-xl">
             Used
+            <animated.span className="ml-2 dark:text-gray-200 text-gray-700 font-semibold text-xs  xl:text-lg">
+              {used.to((x) => Math.round(x))}
+            </animated.span>
           </p>
-          <animated.p className="dark:text-gray-200 text-gray-700 text-xs font-semibold xl:text-lg">
-            {used.interpolate((x) => Math.round(x))}
-          </animated.p>
         </div>
-        <div className="flex-col">
-          <p className="dark:text-gray-400 text-gray-600 text-xs font-medium xl:text-sm">
+        <div className="w-1/2">
+          <p className="dark:text-gray-400 text-gray-500 font-medium text-xs xl:text-lg">
             Total
+            <animated.span className="ml-2 dark:text-gray-200 text-gray-700 text-xs font-semibold xl:text-lg">
+              {total.to((x) => Math.round(x))}
+            </animated.span>
           </p>
-          <animated.p className="dark:text-gray-200 text-gray-700 text-xs font-semibold xl:text-lg">
-            {total.interpolate((x) => Math.round(x))}
-          </animated.p>
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 
