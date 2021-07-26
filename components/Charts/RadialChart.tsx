@@ -99,7 +99,7 @@ export const RadialCard: React.FC<RadialCardProps> = ({
           </p>
         </div>
         <div className="w-1/2">
-          <p className="dark:text-gray-400 text-gray-500 font-medium text-xs xl:text-lg">
+          <p className="dark:text-gray-400 text-gray-500 font-medium text-sm xl:text-xl">
             Total
             <animated.span className="ml-2 dark:text-gray-200 text-gray-700 text-xs font-semibold xl:text-lg">
               {total.to((x) => Math.round(x))}
