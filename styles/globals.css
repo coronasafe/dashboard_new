@@ -7,3 +7,6 @@
 html.dark body {
   @apply bg-gray-900;
 }
+html.light body {
+  @apply bg-gray-100;
+}
