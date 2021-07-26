@@ -2,11 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Inter:100,200,300,400,500,600,700,800,900&display=swap");
 
 html.dark body {
   @apply bg-gray-900;
 }
+
 html.light body {
   @apply bg-gray-100;
 }
