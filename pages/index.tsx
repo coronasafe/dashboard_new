@@ -9,11 +9,13 @@ export default function Home() {
     <div className="container mx-auto px-4">
       <Card className="m-10">
         <CardBody>
-          <h1 className="text-4xl">CoronaSafe</h1>
+          <h1 className="dark:text-gray-200 text-gray-700 text-4xl py-3">
+            CoronaSafe
+          </h1>
           {ACTIVATED_DISTRICTS.map((district) => (
             <div key={district.id}>
               <Link href={`/district/${Parameterize(district.name)}/capacity`}>
-                <Button tag="a" className="mt-4">
+                <Button tag="a" className="my-4">
                   {district.name}
                 </Button>
               </Link>
