@@ -5,7 +5,7 @@ export const Parameterize = (word: string) => {
 };
 
 export const Humanize = (word: string) => {
-  return Capitalize(word.replace(/_/g, " "));
+  return Capitalize(word.toLowerCase().replace(/_/g, " "));
 };
 
 export const Capitalize = (text: string) => {
