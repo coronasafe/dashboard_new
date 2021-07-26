@@ -13,6 +13,7 @@ interface RadialCardProps {
   count: number;
   current: usedTotal;
   previous: usedTotal;
+  className?: string;
 }
 
 export const RadialCard: React.FC<RadialCardProps> = ({
@@ -20,6 +21,7 @@ export const RadialCard: React.FC<RadialCardProps> = ({
   count,
   current,
   previous,
+  className,
 }) => {
   const current_used = Math.round((current.used / current.total) * 100);
   const previous_used = Math.round((previous.used / previous.total) * 100);
@@ -45,7 +47,9 @@ export const RadialCard: React.FC<RadialCardProps> = ({
 
   return (
     <div
-      className="bg-white shadow-sm dark:shadow-none dark:bg-black rounded-xl"
+      className={`bg-white shadow-sm dark:shadow-none dark:bg-black rounded-xl ${
+        className as string
+      }`}
       style={{ padding: "clamp(1rem,5vw,2rem)" }}
     >
       <p className="dark:text-gray-100 text-gray-900 font-medium text-xl mb-2 md:mb-4 text-center">

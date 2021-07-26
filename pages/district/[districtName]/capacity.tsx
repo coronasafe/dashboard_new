@@ -17,6 +17,7 @@ const Capacity = () => {
           current={{ total: 100, used: 50 }}
           label="Non-Covid Oxygen Beds"
           previous={{ total: 100, used: 49 }}
+          className="my-4"
         />
       </div>
     </div>
