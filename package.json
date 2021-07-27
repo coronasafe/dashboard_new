@@ -26,6 +26,7 @@
     "react-suspense-worker": "^0.0.1"
   },
   "devDependencies": {
+    "@types/google-map-react": "^2.1.2",
     "@types/react": "17.0.14",
     "autoprefixer": "^10.3.1",
     "husky": "^7.0.1",
