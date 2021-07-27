@@ -1,5 +1,4 @@
 import axios from "axios";
-import { GetStaticProps, GetStaticPropsResult } from "next";
 import { useRouter } from "next/router";
 import { RadialCard } from "../../../components/Charts";
 import ContentNav from "../../../components/ContentNav";
@@ -10,7 +9,7 @@ import {
   AVAILABILITY_TYPES_TOTAL_ORDERED,
 } from "../../../lib/common";
 import { CareSummary } from "../../../lib/types";
-import { GetDistrictName, Parameterize } from "../../../utils/parser";
+import { Parameterize } from "../../../utils/parser";
 
 interface CapacityProps {
   districtName: string;
@@ -19,13 +18,14 @@ interface CapacityProps {
 
 const Capacity: React.FC<CapacityProps> = ({ data }) => {
   const router = useRouter();
-  console.log({ data });
-  const districtName = GetDistrictName(router.query.districtName);
+  const districtName = router.query.districtName;
+  console.log(districtName);
+  console.log(data);
 
   return (
     <div className="2xl:container mx-auto px-4">
       <ContentNav />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 my-5">
         {AVAILABILITY_TYPES_TOTAL_ORDERED.map((k) => (
           <RadialCard
             count={20}
@@ -48,8 +48,6 @@ const Capacity: React.FC<CapacityProps> = ({ data }) => {
     </div>
   );
 };
-
-export default Capacity;
 
 type Params = {
   params: {
@@ -88,3 +86,4 @@ export async function getStaticPaths() {
 
   return { paths, fallback: "blocking" };
 }
+export default Capacity;
