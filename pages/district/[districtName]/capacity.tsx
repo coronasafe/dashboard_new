@@ -1,7 +1,10 @@
 import axios from "axios";
-import { useRouter } from "next/router";
+import { ArrowRight } from "react-feather";
+import { Button } from "@windmill/react-ui";
+import { useTransition } from "react-spring";
 import { RadialCard } from "../../../components/Charts";
 import ContentNav from "../../../components/ContentNav";
+import { Pill, ValuePill } from "../../../components/Pill";
 import {
   ACTIVATED_DISTRICTS,
   AVAILABILITY_TYPES,
@@ -9,21 +12,34 @@ import {
   AVAILABILITY_TYPES_TOTAL_ORDERED,
 } from "../../../lib/common";
 import { CareSummary } from "../../../lib/types";
+import { Parameterize } from "../../../utils/parser";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { GetDistrictName, Parameterize } from "../../../utils/parser";
 
 interface CapacityProps {
+  districtName: string;
   data: CareSummary;
 }
 
-const Capacity: React.FC<CapacityProps> = ({ data }) => {
-  const router = useRouter();
-  const districtName = GetDistrictName(router.query.districtName);
+const Capacity: React.FC<CapacityProps> = ({ data, districtName }) => {
+  console.log(districtName);
+  console.log(data);
 
   return (
     <div className="2xl:container mx-auto px-4">
       <ContentNav />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 my-5">
+      <div className="grid gap-1 grid-rows-none mb-8 sm:grid-flow-col-dense sm:grid-rows-1 sm:place-content-end my-5">
+        <ValuePill title="Facility Count" value={11231} />
+        <ValuePill title="Oxygen Capacity" value={121} />
+        <ValuePill title="Live Patients" value={87467} />
+        <ValuePill title="Discharged Patients" value={9875} />
+        <Pill title="Forecast">
+          <Button size="small" className="bg-transparent shadow-xs w-full">
+            <ArrowRight className="h-4" />
+          </Button>
+        </Pill>
+      </div>
+
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 my-5">
         {AVAILABILITY_TYPES_TOTAL_ORDERED.map((k) => (
           <RadialCard
             count={20}
@@ -47,35 +63,35 @@ const Capacity: React.FC<CapacityProps> = ({ data }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  const theDistrict = ACTIVATED_DISTRICTS.find(
-    (district) =>
-      Parameterize(district.name) ===
-      Parameterize(context?.params?.districtName as string)
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+}: GetServerSidePropsContext) => {
+  const district = ACTIVATED_DISTRICTS.find(
+    (obj) =>
+      Parameterize(obj.name) === Parameterize(params?.districtName as string)
   );
 
-  const res = await axios.get<CareSummary>(
-    "https://careapi.coronasafe.in/api/v1/facility_summary",
-    {
-      params: {
-        district: theDistrict?.id,
-        limit: 2000,
-      },
-    }
-  );
+  if (district) {
+    const res = await axios.get<CareSummary>(
+      "https://careapi.coronasafe.in/api/v1/facility_summary",
+      {
+        params: {
+          district: district.id,
+          limit: 2000,
+        },
+      }
+    );
 
-  if (theDistrict == undefined || res.data.count <= 0) {
     return {
-      notFound: true,
+      props: {
+        data: res.data,
+        districtName: Parameterize(district.name),
+      },
     };
   }
 
   return {
-    props: {
-      data: res.data,
-    },
+    notFound: true,
   };
 };
 
