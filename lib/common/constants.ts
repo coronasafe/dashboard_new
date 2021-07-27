@@ -21,7 +21,7 @@ export const AVAILABILITY_TYPES_TOTAL_ORDERED = [
   { id: 1111, name: "Ventilator", non_covid: 20, covid: 100 },
 ];
 
-export const AVAILABILITY_TYPES = {
+export const AVAILABILITY_TYPES: { [key: number]: string } = {
   20: "Non-Covid Ventilator",
   10: "Non-Covid ICU",
   150: "Non-Covid Oxygen Beds",
