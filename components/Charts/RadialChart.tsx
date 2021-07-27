@@ -47,10 +47,8 @@ export const RadialCard: React.FC<RadialCardProps> = ({
 
   return (
     <div
-      className={`bg-white shadow-sm dark:shadow-none dark:bg-black rounded-xl ${
-        className as string
-      }`}
-      style={{ padding: "clamp(1rem,5vw,2rem)" }}
+      className={`bg-white shadow-sm dark:shadow-none dark:bg-black rounded-xl ${className} flex flex-col justify-between`}
+      style={{ padding: "clamp(0.75rem,5vw,1.5rem)" }}
     >
       <p className="dark:text-gray-100 text-gray-900 font-medium text-xl mb-2 md:mb-4 text-center">
         {label}
@@ -97,17 +95,17 @@ export const RadialCard: React.FC<RadialCardProps> = ({
       </div>
       <div className="flex text-center mt-4">
         <div className="w-1/2">
-          <p className="dark:text-gray-400 text-gray-500 font-medium text-sm xl:text-xl">
+          <p className="dark:text-gray-400 text-gray-500 font-medium text-lg xl:text-xl">
             Used
-            <animated.span className="ml-2 dark:text-gray-200 text-gray-700 font-semibold text-xs  xl:text-lg">
+            <animated.span className="ml-2 dark:text-gray-200 text-gray-700 font-semibold text-lg  xl:text-xl">
               {used.to((x: number) => Math.round(x))}
             </animated.span>
           </p>
         </div>
         <div className="w-1/2">
-          <p className="dark:text-gray-400 text-gray-500 font-medium text-sm xl:text-xl">
+          <p className="dark:text-gray-400 text-gray-500 font-medium text-lg xl:text-xl">
             Total
-            <animated.span className="ml-2 dark:text-gray-200 text-gray-700 text-xs font-semibold xl:text-lg">
+            <animated.span className="ml-2 dark:text-gray-200 text-gray-700 text-lg font-semibold xl:text-xl">
               {total.to((x: number) => Math.round(x))}
             </animated.span>
           </p>
