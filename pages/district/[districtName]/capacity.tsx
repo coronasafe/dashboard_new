@@ -61,6 +61,7 @@ export const getServerSideProps: GetServerSideProps = async (
     {
       params: {
         district: theDistrict?.id,
+        limit: 2000,
       },
     }
   );
