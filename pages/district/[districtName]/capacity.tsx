@@ -70,11 +70,11 @@ export const getServerSideProps = async ({ params }: Params) => {
         data: res.data,
       },
     };
-  } else {
-    return {
-      notFound: true,
-    };
   }
+
+  return {
+    notFound: true,
+  };
 };
 
 export default Capacity;
