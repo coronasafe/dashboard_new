@@ -1,4 +1,5 @@
 import axios from "axios";
+import { GetStaticProps, GetStaticPropsResult } from "next";
 import { useRouter } from "next/router";
 import { RadialCard } from "../../../components/Charts";
 import ContentNav from "../../../components/ContentNav";
@@ -8,11 +9,12 @@ import {
   AVAILABILITY_TYPES_ORDERED,
   AVAILABILITY_TYPES_TOTAL_ORDERED,
 } from "../../../lib/common";
-import { FacilitySummary } from "../../../lib/types";
+import { CareSummary } from "../../../lib/types";
 import { GetDistrictName, Parameterize } from "../../../utils/parser";
 
 interface CapacityProps {
-  data: FacilitySummary;
+  districtName: string;
+  data: CareSummary;
 }
 
 const Capacity: React.FC<CapacityProps> = ({ data }) => {
@@ -49,21 +51,34 @@ const Capacity: React.FC<CapacityProps> = ({ data }) => {
 
 export default Capacity;
 
-export async function getStaticProps() {
-  const res = await axios.get<FacilitySummary>(
-    "https://careapi.coronasafe.in/api/v1/facility_summary?district=7"
-  );
+type Params = {
+  params: {
+    districtName: string;
+  };
+};
+
+export const getStaticProps = async ({ params }: Params) => {
+  const districtId = ACTIVATED_DISTRICTS.find(
+    (e) => Parameterize(e.name) === Parameterize(params?.districtName)
+  )?.id;
+
+  let faciltyData = {};
+
+  if (districtId) {
+    const res = await axios.get<CareSummary>(
+      "https://careapi.coronasafe.in/api/v1/facility_summary?district=" +
+        districtId
+    );
+    faciltyData = res.data;
+  }
 
   return {
     props: {
-      data: {},
+      data: faciltyData,
     },
-    // Next.js will attempt to re-generate the page:
-    // - When a request comes in
-    // - At most once every 10 seconds
-    revalidate: 10, // In seconds
+    revalidate: 10,
   };
-}
+};
 
 export async function getStaticPaths() {
   // Get the paths we want to pre-render based on posts

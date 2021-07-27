@@ -77,7 +77,7 @@ export interface WardObject {
   local_body: number;
 }
 
-interface CareSummary {
+export interface CareSummary {
   count: number;
   next: string;
   previous: string;
