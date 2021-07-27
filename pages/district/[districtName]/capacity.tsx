@@ -1,7 +1,11 @@
+import { Button } from "@windmill/react-ui";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { ArrowRight } from "react-feather";
+import { useTransition } from "react-spring";
 import { RadialCard } from "../../../components/Charts";
 import ContentNav from "../../../components/ContentNav";
+import { Pill, ValuePill } from "../../../components/Pill";
 import {
   ACTIVATED_DISTRICTS,
   AVAILABILITY_TYPES,
@@ -25,6 +29,18 @@ const Capacity: React.FC<CapacityProps> = ({ data }) => {
   return (
     <div className="2xl:container mx-auto px-4">
       <ContentNav />
+      <div className="grid gap-1 grid-rows-none mb-8 sm:grid-flow-col-dense sm:grid-rows-1 sm:place-content-end">
+        <ValuePill title="Facility Count" value={11231} />
+        <ValuePill title="Oxygen Capacity" value={121} />
+        <ValuePill title="Live Patients" value={87467} />
+        <ValuePill title="Discharged Patients" value={9875} />
+        <Pill title="Forecast">
+          <Button size="small" className="bg-transparent shadow-xs w-full">
+            <ArrowRight className="h-4" />
+          </Button>
+        </Pill>
+      </div>
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 my-5">
         {AVAILABILITY_TYPES_TOTAL_ORDERED.map((k) => (
           <RadialCard
