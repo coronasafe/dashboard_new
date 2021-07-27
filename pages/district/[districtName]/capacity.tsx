@@ -74,7 +74,6 @@ export const getServerSideProps = async ({ params }: Params) => {
     props: {
       data: faciltyData,
     },
-    revalidate: 10,
   };
 };
 
