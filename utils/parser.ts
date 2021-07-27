@@ -1,6 +1,7 @@
 import { ACTIVATED_DISTRICTS } from "../lib/common";
 
-export const Parameterize = (word: string) => {
+export const Parameterize = (word: string | undefined) => {
+  if (!word) return "";
   return word.toLowerCase().replace(/ /g, "_");
 };
 
