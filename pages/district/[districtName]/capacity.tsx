@@ -55,7 +55,7 @@ type Params = {
   };
 };
 
-export const getStaticProps = async ({ params }: Params) => {
+export const getServerSideProps = async ({ params }: Params) => {
   const districtId = ACTIVATED_DISTRICTS.find(
     (e) => Parameterize(e.name) === Parameterize(params?.districtName)
   )?.id;
@@ -78,12 +78,4 @@ export const getStaticProps = async ({ params }: Params) => {
   };
 };
 
-export async function getStaticPaths() {
-  // Get the paths we want to pre-render based on posts
-  const paths = ACTIVATED_DISTRICTS.map((district) => ({
-    params: { districtName: Parameterize(district.name) },
-  }));
-
-  return { paths, fallback: "blocking" };
-}
 export default Capacity;
