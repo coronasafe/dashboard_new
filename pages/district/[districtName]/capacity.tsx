@@ -8,22 +8,22 @@ import {
   AVAILABILITY_TYPES_ORDERED,
   AVAILABILITY_TYPES_TOTAL_ORDERED,
 } from "../../../lib/common";
-import { FacilitySummary } from "../../../lib/types";
+import { CareSummary } from "../../../lib/types";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { GetDistrictName, Parameterize } from "../../../utils/parser";
 
 interface CapacityProps {
-  data: FacilitySummary;
+  data: CareSummary;
 }
 
 const Capacity: React.FC<CapacityProps> = ({ data }) => {
   const router = useRouter();
-  console.log({ data });
   const districtName = GetDistrictName(router.query.districtName);
 
   return (
     <div className="2xl:container mx-auto px-4">
       <ContentNav />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 my-5">
         {AVAILABILITY_TYPES_TOTAL_ORDERED.map((k) => (
           <RadialCard
             count={20}
@@ -47,29 +47,35 @@ const Capacity: React.FC<CapacityProps> = ({ data }) => {
   );
 };
 
-export default Capacity;
-
-export async function getStaticProps() {
-  const res = await axios.get<FacilitySummary>(
-    "https://careapi.coronasafe.in/api/v1/facility_summary?district=7"
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const theDistrict = ACTIVATED_DISTRICTS.find(
+    (district) =>
+      Parameterize(district.name) ===
+      Parameterize(context?.params?.districtName as string)
   );
+
+  const res = await axios.get<CareSummary>(
+    "https://careapi.coronasafe.in/api/v1/facility_summary",
+    {
+      params: {
+        district: theDistrict?.id,
+      },
+    }
+  );
+
+  if (theDistrict == undefined || res.data.count <= 0) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
-      data: {},
+      data: res.data,
     },
-    // Next.js will attempt to re-generate the page:
-    // - When a request comes in
-    // - At most once every 10 seconds
-    revalidate: 10, // In seconds
   };
-}
+};
 
-export async function getStaticPaths() {
-  // Get the paths we want to pre-render based on posts
-  const paths = ACTIVATED_DISTRICTS.map((district) => ({
-    params: { districtName: Parameterize(district.name) },
-  }));
-
-  return { paths, fallback: "blocking" };
-}
+export default Capacity;
