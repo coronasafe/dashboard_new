@@ -60,21 +60,21 @@ export const getServerSideProps = async ({ params }: Params) => {
     (e) => Parameterize(e.name) === Parameterize(params?.districtName)
   )?.id;
 
-  let faciltyData = {};
-
   if (districtId) {
     const res = await axios.get<CareSummary>(
       "https://careapi.coronasafe.in/api/v1/facility_summary?district=" +
         districtId
     );
-    faciltyData = res.data;
+    return {
+      props: {
+        data: res.data,
+      },
+    };
+  } else {
+    return {
+      notFound: true,
+    };
   }
-
-  return {
-    props: {
-      data: faciltyData,
-    },
-  };
 };
 
 export default Capacity;
