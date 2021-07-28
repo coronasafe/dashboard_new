@@ -14,6 +14,8 @@ import {
 import { CareSummary } from "../../../lib/types";
 import { Parameterize } from "../../../utils/parser";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import GMap from "../../../components/GMap/GMap";
+import { capacityMockData } from "../../../utils/mock/capacity";
 
 interface CapacityProps {
   districtName: string;
@@ -21,6 +23,9 @@ interface CapacityProps {
 }
 
 const Capacity: React.FC<CapacityProps> = ({ data, districtName }) => {
+  const { capacityCardData, facilitiesTrivia, todayFiltered, filterDistrict } =
+    capacityMockData;
+
   console.log(districtName);
   console.log(data);
 
@@ -28,10 +33,22 @@ const Capacity: React.FC<CapacityProps> = ({ data, districtName }) => {
     <div className="2xl:container mx-auto px-4">
       <ContentNav />
       <div className="grid gap-1 grid-rows-none mb-8 sm:grid-flow-col-dense sm:grid-rows-1 sm:place-content-end my-5">
-        <ValuePill title="Facility Count" value={11231} />
-        <ValuePill title="Oxygen Capacity" value={121} />
-        <ValuePill title="Live Patients" value={87467} />
-        <ValuePill title="Discharged Patients" value={9875} />
+        <ValuePill
+          title="Facility Count"
+          value={facilitiesTrivia.current.count}
+        />
+        <ValuePill
+          title="Oxygen Capacity"
+          value={facilitiesTrivia.current.oxygen}
+        />
+        <ValuePill
+          title="Live Patients"
+          value={facilitiesTrivia.current.actualLivePatients}
+        />
+        <ValuePill
+          title="Discharged Patients"
+          value={facilitiesTrivia.current.actualDischargedPatients}
+        />
         <Pill title="Forecast">
           <Button size="small" className="bg-transparent shadow-xs w-full">
             <ArrowRight className="h-4" />
@@ -42,23 +59,31 @@ const Capacity: React.FC<CapacityProps> = ({ data, districtName }) => {
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 my-5">
         {AVAILABILITY_TYPES_TOTAL_ORDERED.map((k) => (
           <RadialCard
-            count={20}
-            current={{ total: 100, used: 50 }}
-            previous={{ total: 100, used: 49 }}
             label={k.name}
+            count={facilitiesTrivia.current.count}
+            //@ts-ignore
+            current={facilitiesTrivia.current[k.id]}
+            //@ts-ignore
+            previous={facilitiesTrivia.previous[k.id]}
             key={k.id}
           />
         ))}
         {AVAILABILITY_TYPES_ORDERED.map((k) => (
           <RadialCard
             label={AVAILABILITY_TYPES[k]}
-            count={20}
-            current={{ total: 100, used: 50 }}
-            previous={{ total: 100, used: 49 }}
+            count={facilitiesTrivia.current.count}
+            //@ts-ignore
+            current={facilitiesTrivia.current[k]}
+            //@ts-ignore
+            previous={facilitiesTrivia.previous[k]}
             key={k}
           />
         ))}
       </div>
+      <div id="capacity-map">
+        <h1 className="dark:text-gray-100 text-3xl mb-4"> Map </h1>
+      </div>
+      <GMap district={filterDistrict} facilities={todayFiltered} />
     </div>
   );
 };
