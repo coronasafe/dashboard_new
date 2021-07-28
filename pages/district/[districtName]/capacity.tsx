@@ -11,13 +11,13 @@ import {
   AVAILABILITY_TYPES_ORDERED,
   AVAILABILITY_TYPES_TOTAL_ORDERED,
 } from "../../../lib/common";
-import { CareSummary } from "../../../lib/types";
+import { CareSummaryResponse } from "../../../lib/types";
 import { Parameterize } from "../../../utils/parser";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 interface CapacityProps {
   districtName: string;
-  data: CareSummary;
+  data: CareSummaryResponse;
 }
 
 const Capacity: React.FC<CapacityProps> = ({ data, districtName }) => {
@@ -72,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   );
 
   if (district) {
-    const res = await axios.get<CareSummary>(
+    const res = await axios.get<CareSummaryResponse>(
       "https://careapi.coronasafe.in/api/v1/facility_summary",
       {
         params: {

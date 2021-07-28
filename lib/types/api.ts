@@ -77,7 +77,7 @@ export interface WardObject {
   local_body: number;
 }
 
-export interface CareSummary {
+export interface CareSummaryResponse {
   count: number;
   next: string;
   previous: string;
@@ -90,7 +90,7 @@ const careSummary = async (
   limit = 2000,
   start_date?: string,
   end_date?: string
-): Promise<CareSummary> => {
+): Promise<CareSummaryResponse> => {
   return axios
     .get(`https://careapi.coronasafe.in/api/v1/${type}_summary`, {
       params: {
@@ -109,7 +109,7 @@ const individualCareSummary = async (
   facility: string,
   start_date?: string,
   end_date?: string
-): Promise<CareSummary> => {
+): Promise<CareSummaryResponse> => {
   return axios
     .get(`/api/v1/${type}_summary/`, {
       params: {
