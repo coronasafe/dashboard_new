@@ -85,14 +85,14 @@ export interface CareSummary {
 }
 
 const careSummary = async (
-  type: string,
-  start_date: string,
-  end_date: string,
+  type: "facility" | "triage" | "patient" | "tests" | "district_patient",
   district: string,
-  limit = 2000
+  limit = 2000,
+  start_date?: string,
+  end_date?: string
 ): Promise<CareSummary> => {
   return axios
-    .get(`/api/v1/${type}_summary`, {
+    .get(`https://careapi.coronasafe.in/api/v1/${type}_summary`, {
       params: {
         start_date,
         end_date,
@@ -105,10 +105,10 @@ const careSummary = async (
 };
 
 const individualCareSummary = async (
-  type: string,
-  start_date: string,
-  end_date: string,
-  facility: string
+  type: "facility" | "triage" | "patient" | "tests" | "district_patient",
+  facility: string,
+  start_date?: string,
+  end_date?: string
 ): Promise<CareSummary> => {
   return axios
     .get(`/api/v1/${type}_summary/`, {
