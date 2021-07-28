@@ -1,4 +1,6 @@
 import "../styles/globals.css";
+import "../styles/marker.css";
+
 import Head from "next/head";
 import type { AppProps } from "next/app";
 import { Windmill } from "@windmill/react-ui";
