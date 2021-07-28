@@ -1,7 +1,5 @@
-import axios from "axios";
 import { ArrowRight } from "react-feather";
 import { Button } from "@windmill/react-ui";
-import { useTransition } from "react-spring";
 import { RadialCard } from "../../../components/Charts";
 import ContentNav from "../../../components/ContentNav";
 import { Pill, ValuePill } from "../../../components/Pill";
@@ -11,7 +9,7 @@ import {
   AVAILABILITY_TYPES_ORDERED,
   AVAILABILITY_TYPES_TOTAL_ORDERED,
 } from "../../../lib/common";
-import { CareSummaryResponse } from "../../../lib/types";
+import { careSummary, CareSummaryResponse } from "../../../lib/types";
 import { Parameterize } from "../../../utils/parser";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
@@ -72,19 +70,11 @@ export const getServerSideProps: GetServerSideProps = async ({
   );
 
   if (district) {
-    const res = await axios.get<CareSummaryResponse>(
-      "https://careapi.coronasafe.in/api/v1/facility_summary",
-      {
-        params: {
-          district: district.id,
-          limit: 2000,
-        },
-      }
-    );
+    const data = await careSummary("facility", district.id);
 
     return {
       props: {
-        data: res.data,
+        data,
         districtName: Parameterize(district.name),
       },
     };

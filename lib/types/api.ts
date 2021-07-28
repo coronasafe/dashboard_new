@@ -87,8 +87,8 @@ export interface CareSummaryResponse {
 interface CareSummary {
   (
     type: "facility" | "triage" | "patient" | "tests" | "district_patient",
-    district: string,
-    limit: number,
+    district: string | number,
+    limit?: number,
     start_date?: string,
     end_date?: string
   ): Promise<CareSummaryResponse>;
@@ -97,7 +97,7 @@ interface CareSummary {
 interface IndividualCareSummary {
   (
     type: "facility" | "triage" | "patient" | "tests" | "district_patient",
-    facility: string,
+    facility: string | number,
     start_date?: string,
     end_date?: string
   ): Promise<CareSummaryResponse>;
