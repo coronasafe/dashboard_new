@@ -84,13 +84,32 @@ export interface CareSummaryResponse {
   results: FacilitySummary[];
 }
 
-const careSummary = async (
-  type: "facility" | "triage" | "patient" | "tests" | "district_patient",
-  district: string,
+interface CareSummary {
+  (
+    type: "facility" | "triage" | "patient" | "tests" | "district_patient",
+    district: string,
+    limit: number,
+    start_date?: string,
+    end_date?: string
+  ): Promise<CareSummaryResponse>;
+}
+
+interface IndividualCareSummary {
+  (
+    type: "facility" | "triage" | "patient" | "tests" | "district_patient",
+    facility: string,
+    start_date?: string,
+    end_date?: string
+  ): Promise<CareSummaryResponse>;
+}
+
+const careSummary: CareSummary = async (
+  type,
+  district,
   limit = 2000,
-  start_date?: string,
-  end_date?: string
-): Promise<CareSummaryResponse> => {
+  start_date?,
+  end_date?
+) => {
   return axios
     .get(`https://careapi.coronasafe.in/api/v1/${type}_summary`, {
       params: {
@@ -104,12 +123,12 @@ const careSummary = async (
     .catch(console.log);
 };
 
-const individualCareSummary = async (
-  type: "facility" | "triage" | "patient" | "tests" | "district_patient",
-  facility: string,
-  start_date?: string,
-  end_date?: string
-): Promise<CareSummaryResponse> => {
+const individualCareSummary: IndividualCareSummary = async (
+  type,
+  facility,
+  start_date?,
+  end_date?
+) => {
   return axios
     .get(`/api/v1/${type}_summary/`, {
       params: {
