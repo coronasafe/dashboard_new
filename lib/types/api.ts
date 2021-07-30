@@ -10,6 +10,7 @@ export interface FacilitySummary {
 export interface FacilityData {
   id: string;
   name: string;
+  date: string;
   ward: number;
   state: number;
   address: string;
@@ -18,6 +19,8 @@ export interface FacilityData {
   location: Location;
   local_body: number;
   ward_object: WardObject;
+  capacity?: Capacity[];
+  inventory?: Inventory[];
   availability?: Availability[];
   created_date: string;
   phone_number: string;
@@ -35,6 +38,26 @@ export interface FacilityData {
   expected_type_c_cylinders: number;
   expected_type_d_cylinders: number;
   expected_oxygen_requirement: number;
+  actual_discharged_patients: number;
+  actual_live_patients: number;
+}
+
+export interface Inventory {
+  unit: string;
+  stock: number;
+  is_low: boolean;
+  burn_rate: number;
+  end_stock: number;
+  item_name: "PPE";
+  start_stock: number;
+  total_added: number;
+  modified_date: string;
+  total_consumed: number;
+}
+
+export interface Capacity {
+  total_capacity: number | string;
+  current_capacity: number | string;
 }
 
 export interface Availability {
