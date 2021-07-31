@@ -16,6 +16,7 @@
     "arima": "^0.2.2",
     "axios": "^0.21.1",
     "classnames": "^2.3.1",
+    "clsx": "^1.1.1",
     "dayjs": "^1.10.6",
     "fuse.js": "^6.4.6",
     "google-map-react": "^2.1.10",
