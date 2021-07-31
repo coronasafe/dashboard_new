@@ -136,7 +136,7 @@ const theme = {
   // Card
   card: {
     base: "min-w-0 rounded-lg shadow-xs overflow-hidden",
-    default: "bg-white dark:bg-gray-800",
+    default: "bg-white dark:bg-black",
   },
   cardBody: {
     base: "p-4",
