@@ -13,7 +13,7 @@ const NavBar: React.FunctionComponent<NavBarProps> = () => {
   const { mode, toggleMode } = useContext(WindmillContext);
 
   return (
-    <div className="flex items-center bg-white dark:bg-gray-800 shadow-md h-12 px-5">
+    <div className="flex items-center bg-white dark:bg-gray-800 shadow-md h-12 px-5 sticky top-0 z-50">
       <HamburgerIcon
         isOpen={isOpen}
         onClick={() => setIsOpen((prev) => !prev)}
