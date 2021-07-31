@@ -1,5 +1,5 @@
 import { ArrowRight } from "react-feather";
-import { Button } from "@windmill/react-ui";
+import { Button, Input, Pagination } from "@windmill/react-ui";
 import { RadialCard } from "../../../components/Charts";
 import ContentNav from "../../../components/ContentNav";
 import { Pill, ValuePill } from "../../../components/Pill";
@@ -14,6 +14,8 @@ import { Parameterize } from "../../../utils/parser";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import GMap from "../../../components/GMap/GMap";
 import { capacityMockData } from "../../../utils/mock/capacity";
+import { useEffect, useState } from "react";
+import { CapacityCard } from "../../../components/CapacityCard";
 
 interface CapacityProps {
   districtName: string;
@@ -23,6 +25,22 @@ interface CapacityProps {
 const Capacity: React.FC<CapacityProps> = ({ data, districtName }) => {
   const { capacityCardData, facilitiesTrivia, todayFiltered, filterDistrict } =
     capacityMockData;
+
+  const [tableData, setTableData] = useState(capacityCardData);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [page, setPage] = useState(0);
+  const resultsPerPage = 10;
+
+  // TODO: Remove this once we have a better way of handling the data
+  const exported = undefined;
+
+  useEffect(() => {
+    const skip = (page - 1) * resultsPerPage;
+    const end = skip + resultsPerPage;
+    setTableData(capacityCardData.slice(skip, end));
+    console.log(page);
+  }, [page]);
 
   console.log(districtName);
   console.log(data);
@@ -77,6 +95,36 @@ const Capacity: React.FC<CapacityProps> = ({ data, districtName }) => {
             key={k}
           />
         ))}
+      </div>
+      <div id="facility-capacity-cards" className="mb-16 mt-16">
+        <div className="items-center flex flex-col justify-between md:flex-row">
+          <h1 className="dark:text-gray-100 text-3xl mb-4">Facilities</h1>
+          <div className="flex max-w-full space-x-4">
+            {true && (
+              // <CSVLink data={exported.data} filename={exported.filename}>
+              <Button block>Export</Button>
+              // </CSVLink>
+            )}
+            <Input
+              css={{}}
+              className="sw-40 rounded-lg sm:w-auto"
+              placeholder="Search Facility"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+            />
+          </div>
+        </div>
+
+        {tableData.map((tData, index) => (
+          <CapacityCard data={tData} key={index} />
+        ))}
+
+        <Pagination
+          resultsPerPage={10}
+          totalResults={capacityCardData.length}
+          label=""
+          onChange={(page) => setPage(page)}
+        />
       </div>
       <div id="capacity-map">
         <h1 className="dark:text-gray-100 text-3xl mb-4"> Map </h1>
