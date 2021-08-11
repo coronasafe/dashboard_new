@@ -21,9 +21,8 @@ const PatientSummaryPage: React.FC<PatientSummaryProps> = ({ district }) => {
         return (
           <InfoCard
             key={i}
-            small={true}
             title={value}
-            value={(data && data[key].total) || 0}
+            value={(data && data[key]?.total) || 10}
             delta={(Math.random() * 100 + 50) * (Math.random() > 0.5 ? -1 : 1)}
           />
         );
