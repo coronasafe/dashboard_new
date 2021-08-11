@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import ContentNav from "../../../components/ContentNav";
-import PatientSummary from "../../../components/Patient";
+import PatientSummary from "../../../components/Patient/PatientSummary";
 import { ValuePill } from "../../../components/Pill";
 import { getDistrict, getDistrictName } from "../../../utils/parser";
 import useSWR from "swr";

@@ -1,36 +1,28 @@
 import dayjs from "dayjs";
-import { VercelRequest, VercelResponse } from "vercel/node";
+import { VercelRequest, VercelResponse } from "@vercel/node";
 import { APIResponder } from "../../../lib/api/helper";
-import { ACTIVATED_DISTRICTS } from "../../../lib/common";
-import { careSummary, FacilityData, FacilitySummary } from "../../../lib/types";
+import { ACTIVATED_DISTRICTS, PATIENT_TYPES } from "../../../lib/common";
+import { careSummary, FacilitySummary } from "../../../lib/types";
 import {
   getDaysAfter,
   getDaysBefore,
   toDateString,
 } from "../../../utils/parser";
 
-const patientSummary: {
-  [key: string]: { today: number; total: number };
-} = {
-  icu: { total: 0, today: 0 },
-  oxygen_bed: { total: 0, today: 0 },
-  bed_with_oxygen_support: { total: 0, today: 0 },
-  icu_with_oxygen_support: { total: 0, today: 0 },
-  not_admitted: { total: 0, today: 0 },
-  home_isolation: { total: 0, today: 0 },
-  isolation_room: { total: 0, today: 0 },
-  home_quarantine: { total: 0, today: 0 },
-  paediatric_ward: { total: 0, today: 0 },
-  gynaecology_ward: { total: 0, today: 0 },
-  icu_with_invasive_ventilator: { total: 0, today: 0 },
-  icu_with_non_invasive_ventilator: { total: 0, today: 0 },
-};
-
-const processPatientData = (summary: FacilitySummary[]) => {
+const processPatientData = (facilities: FacilitySummary[]) => {
   // Retrieve all Patient Types
-  const patientTypes = Object.keys(patientSummary);
+  const patientTypes = Object.keys(PATIENT_TYPES);
 
-  summary.forEach(({ data }) => {
+  // Initialize all Patient Types with Zero Count
+  const patientSummary: {
+    [key: string]: { today: number; total: number };
+  } = patientTypes.reduce(
+    (acc, curr) => ({ ...acc, [curr]: { total: 0, today: 0 } }),
+    {}
+  );
+
+  // Sum Up of All Today and Total Count of each facilities
+  facilities.forEach(({ data }) => {
     patientTypes.forEach((type) => {
       patientSummary[type].total += data[`total_patients_${type}`] || 0;
       patientSummary[type].today += data[`today_patients_${type}`] || 0;
@@ -41,15 +33,15 @@ const processPatientData = (summary: FacilitySummary[]) => {
 };
 
 const handler = async (req: VercelRequest, res: VercelResponse) => {
-  const districtId = req.query.districtID;
+  const districtId = parseInt(req.query.districtId);
 
   if (!districtId) return APIResponder("ERROR", res);
 
-  const districtExists = ACTIVATED_DISTRICTS.find(
-    (district) => district.id === Number(districtId)
+  const district = ACTIVATED_DISTRICTS.find(
+    (district) => district.id === districtId
   );
 
-  if (!districtExists)
+  if (!district)
     return APIResponder("ERROR", res, {
       message: "District with this ID does not exist",
     });
@@ -59,7 +51,7 @@ const handler = async (req: VercelRequest, res: VercelResponse) => {
 
   const { results } = await careSummary(
     "patient",
-    Number(districtId),
+    districtId,
     2000,
     prevDate,
     nextDate
@@ -73,10 +65,7 @@ const handler = async (req: VercelRequest, res: VercelResponse) => {
 
   const summary = processPatientData(recentFacilities);
 
-  return APIResponder("SUCCESS", res, {
-    summary,
-    count: recentFacilities.length,
-  });
+  return APIResponder("SUCCESS", res, summary);
 };
 
 export default handler;

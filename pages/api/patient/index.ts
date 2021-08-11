@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { VercelRequest, VercelResponse } from "vercel/node";
+import { VercelRequest, VercelResponse } from "@vercel/node";
 import { APIResponder } from "../../../lib/api/helper";
 import { ACTIVATED_DISTRICTS } from "../../../lib/common";
 import { careSummary, FacilityData, FacilitySummary } from "../../../lib/types";
