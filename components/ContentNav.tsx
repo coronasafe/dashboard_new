@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { ChevronDown } from "react-feather";
 import { Button, Dropdown, DropdownItem } from "@windmill/react-ui";
 import { CONTENT, ACTIVATED_DISTRICTS } from "../lib/common";
-import { GetDistrictName, Humanize, Parameterize } from "../utils/parser";
+import { getDistrictName, humanize, parameterize } from "../utils/parser";
 import PageTitle from "./Typography/PageTitle";
 
 const ContentNav = () => {
@@ -13,14 +13,14 @@ const ContentNav = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const currentContent = router.pathname.split("/")[3];
-  const districtName = GetDistrictName(router.query.districtName);
+  const districtName = getDistrictName(router.query.districtName?.toString());
 
   return (
     <div>
       <PageTitle text="District Dashboard" />
       <div className="flex flex-col items-center justify-between mb-2 px-4 py-2 bg-primary-500 rounded-lg shadow-md md:flex-row">
         <p className="text-white font-semibold">
-          {Humanize(districtName as string)}
+          {humanize(districtName as string)}
         </p>
         <div className="md:flex md:space-x-2">
           <div className="flex flex-wrap justify-center dark:text-gray-700 dark:bg-gray-900 bg-white rounded-lg space-x-1 space-y-1 md:space-x-0 md:space-y-0">
@@ -28,7 +28,7 @@ const ContentNav = () => {
               const lastContent = i === Object.keys(CONTENT).length - 1;
               return (
                 <Link
-                  href={`/district/${districtName}/${Parameterize(content)}`}
+                  href={`/district/${districtName}/${parameterize(content)}`}
                   key={i}
                 >
                   <Button
@@ -42,7 +42,7 @@ const ContentNav = () => {
                           i !== 0 && !lastContent,
                       }
                     )}
-                    disabled={currentContent === Parameterize(content)}
+                    disabled={currentContent === parameterize(content)}
                   >
                     <span className="capitalize">{content.toLowerCase()}</span>
                   </Button>
@@ -61,7 +61,7 @@ const ContentNav = () => {
               iconRight={ChevronDown}
               className="w-full shadow-xs"
             >
-              {Humanize(districtName as string)}
+              {humanize(districtName as string)}
             </Button>
             <Dropdown
               isOpen={isOpen}
@@ -74,7 +74,7 @@ const ContentNav = () => {
                   key={district.id}
                   onClick={() => {
                     router.push(
-                      `/district/${Parameterize(district.name)}/capacity`
+                      `/district/${parameterize(district.name)}/capacity`
                     );
                     setIsOpen(false);
                   }}

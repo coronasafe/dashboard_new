@@ -1,11 +1,11 @@
 import { useRouter } from "next/router";
 import ContentNav from "../../../components/ContentNav";
-import { GetDistrictName } from "../../../utils/parser";
+import { getDistrictName } from "../../../utils/parser";
 
 const Oxygen = () => {
   const router = useRouter();
 
-  const districtName = GetDistrictName(router.query.districtName);
+  const districtName = getDistrictName(router.query.districtName?.toString());
 
   return (
     <div className="container mx-auto px-4">

@@ -10,7 +10,7 @@ import {
   AVAILABILITY_TYPES_TOTAL_ORDERED,
 } from "../../../lib/common";
 import { careSummary, CareSummaryResponse } from "../../../lib/types";
-import { Parameterize } from "../../../utils/parser";
+import { parameterize } from "../../../utils/parser";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import GMap from "../../../components/GMap/GMap";
 import { capacityMockData } from "../../../utils/mock/capacity";
@@ -41,9 +41,6 @@ const Capacity: React.FC<CapacityProps> = ({ data, districtName }) => {
     setTableData(capacityCardData.slice(skip, end));
     console.log(page);
   }, [page]);
-
-  console.log(districtName);
-  console.log(data);
 
   return (
     <div className="2xl:container mx-auto px-4">
@@ -144,7 +141,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const district = ACTIVATED_DISTRICTS.find(
     (obj) =>
-      Parameterize(obj.name) === Parameterize(params?.districtName as string)
+      parameterize(obj.name) === parameterize(params?.districtName as string)
   );
 
   if (district) {
@@ -153,7 +150,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     return {
       props: {
         data,
-        districtName: Parameterize(district.name),
+        districtName: parameterize(district.name),
       },
     };
   }

@@ -1,32 +1,43 @@
+import dayjs from "dayjs";
 import { ACTIVATED_DISTRICTS } from "../lib/common";
 import { FacilityData, Inventory } from "../lib/types";
 
-export const Parameterize = (word: string | undefined) => {
+export const parameterize = (word: string | undefined) => {
   if (!word) return "";
   return word.toLowerCase().replace(/ /g, "_");
 };
 
-export const Humanize = (word: string) => {
-  return Capitalize(word.toLowerCase().replace(/_/g, " "));
+export const humanize = (word: string) => {
+  return capitalize(word.toLowerCase().replace(/_/g, " "));
 };
 
-export const Capitalize = (text: string) => {
+export const capitalize = (text: string) => {
   return text.replace(/\w\S*/g, (word) => {
     return word.replace(/^\w/, (c) => c.toUpperCase());
   });
 };
 
-export const GetDistrictName = (district: string | string[] | undefined) => {
-  const theDistrict =
-    district == undefined ? ACTIVATED_DISTRICTS[0].name : district;
-
-  return Parameterize(theDistrict as string);
+export const getDistrictName = (district: string | undefined) => {
+  return parameterize(district || ACTIVATED_DISTRICTS[0].name);
 };
 
-export const ToDateString = (date: Date) => {
-  return `${date.getFullYear()}-${`0${date.getMonth() + 1}`.slice(
-    -2
-  )}-${`0${date.getDate()}`.slice(-2)}`;
+export const getDistrict = (name: string | undefined) => {
+  const districtName = parameterize(name);
+  return ACTIVATED_DISTRICTS.find(
+    ({ name }) => parameterize(name) === districtName
+  );
+};
+
+export const toDateString = (date: Date) => {
+  return dayjs(date).format("YYYY-MM-DD");
+};
+
+export const getDaysBefore = (n: number) => {
+  return dayjs().subtract(n, "days").toDate();
+};
+
+export const getDaysAfter = (n: number) => {
+  return dayjs().add(n, "days").toDate();
 };
 
 export const InventoryTimeToEmpty = (inventoryItem: Inventory) =>

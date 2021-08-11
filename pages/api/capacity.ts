@@ -11,7 +11,7 @@ import {
   GetCapacityBedData,
   GetFinalTotalData,
   InventoryTimeToEmpty,
-  ToDateString,
+  toDateString,
 } from "../../utils/parser";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -75,7 +75,7 @@ const processFacilityData = (facilities: FacilitySummary[]) => {
 
   return facility.map(({ data, created_date, facility, modified_date }) => {
     return {
-      date: ToDateString(new Date(created_date)),
+      date: toDateString(new Date(created_date)),
       id: facility.id,
       name: facility.name,
       address: facility.address,
