@@ -8,7 +8,7 @@ import { getDistrictName } from "../../../utils/parser";
 const Tests = () => {
   const router = useRouter();
 
-  const districtName = getDistrictName(router.query.districtName);
+  const districtName = getDistrictName(router.query.districtName?.toString());
 
   return (
     <div className="container mx-auto px-4">

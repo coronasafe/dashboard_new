@@ -16,7 +16,7 @@ export function InfoCard({ title = "", value = 0, delta = 0, small = false }) {
   });
 
   return (
-    <Card className="bg-white dark:bg-black rounded-xl md:p-3">
+    <Card className="bg-white dark:bg-gray-800 rounded-xl md:p-3">
       <CardBody className="flex flex-col">
         <div>
           <p

@@ -40,6 +40,48 @@ export interface FacilityData {
   expected_oxygen_requirement: number;
   actual_discharged_patients: number;
   actual_live_patients: number;
+  today_patients_not_admitted: number;
+  total_patients_not_admitted: number;
+  today_patients_home_isolation: number;
+  today_patients_isolation_room: number;
+  total_patients_home_isolation: number;
+  total_patients_isolation_room: number;
+  today_patients_home_quarantine: number;
+  today_patients_paediatric_ward: number;
+  total_patients_home_quarantine: number;
+  total_patients_paediatric_ward: number;
+  today_patients_gynaecology_ward: number;
+  total_patients_gynaecology_ward: number;
+  today_patients_bed_with_oxygen_support: number;
+  today_patients_icu_with_oxygen_support: number;
+  total_patients_bed_with_oxygen_support: number;
+  total_patients_icu_with_oxygen_support: number;
+  today_patients_icu_with_invasive_ventilator: number;
+  total_patients_icu_with_invasive_ventilator: number;
+  today_patients_icu_with_non_invasive_ventilator: number;
+  total_patients_icu_with_non_invasive_ventilator: number;
+  [key: string]: any;
+}
+
+export interface SummaryCount {
+  total: number;
+  today: number;
+}
+
+export interface PatientSummary {
+  icu: SummaryCount;
+  oxygen_bed: SummaryCount;
+  bed_with_oxygen_support: SummaryCount;
+  icu_with_oxygen_support: SummaryCount;
+  not_admitted: SummaryCount;
+  home_isolation: SummaryCount;
+  isolation_room: SummaryCount;
+  home_quarantine: SummaryCount;
+  paediatric_ward: SummaryCount;
+  gynaecology_ward: SummaryCount;
+  icu_with_invasive_ventilator: SummaryCount;
+  icu_with_non_invasive_ventilator: SummaryCount;
+  [key: string]: SummaryCount;
 }
 
 export interface Inventory {
@@ -129,12 +171,12 @@ interface IndividualCareSummary {
 const careSummary: CareSummary = async (
   type,
   district,
-  limit = 2000,
+  limit = 5000,
   start_date?,
   end_date?
 ) => {
   return axios
-    .get(`https://careapi.coronasafe.in/api/v1/${type}_summary`, {
+    .get(`https://dashboard.coronasafe.network/api/v1/${type}_summary`, {
       params: {
         start_date,
         end_date,
