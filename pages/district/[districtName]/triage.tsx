@@ -4,12 +4,12 @@ import { InfoCard } from "../../../components/InfoCard";
 import { ValuePill } from "../../../components/Pill";
 import { TRIAGE_TYPES } from "../../../lib/common";
 import { capacityMockData } from "../../../utils/mock/capacity";
-import { GetDistrictName } from "../../../utils/parser";
+import { getDistrictName } from "../../../utils/parser";
 
 const Triage = () => {
   const router = useRouter();
 
-  const districtName = GetDistrictName(router.query.districtName);
+  const districtName = getDistrictName(router.query.districtName?.toString());
 
   return (
     <div className="container mx-auto px-4">

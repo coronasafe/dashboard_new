@@ -3,12 +3,12 @@ import ContentNav from "../../../components/ContentNav";
 import { InfoCard } from "../../../components/InfoCard";
 import { ValuePill } from "../../../components/Pill";
 import { TESTS_TYPES } from "../../../lib/common";
-import { GetDistrictName } from "../../../utils/parser";
+import { getDistrictName } from "../../../utils/parser";
 
 const Tests = () => {
   const router = useRouter();
 
-  const districtName = GetDistrictName(router.query.districtName);
+  const districtName = getDistrictName(router.query.districtName?.toString());
 
   return (
     <div className="container mx-auto px-4">
