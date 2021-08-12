@@ -1,8 +1,18 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { APIResponder } from "../../lib/api/helper";
-import { ACTIVATED_DISTRICTS } from "../../lib/common";
-import { careSummary, FacilitySummary } from "../../lib/types";
-import { GetCapacityBedData, GetFinalTotalData } from "../../utils/parser";
+import { ACTIVATED_DISTRICTS, OXYGEN_INVENTORY } from "../../lib/common";
+import {
+  careSummary,
+  FacilityData,
+  FacilitySummary,
+  Inventory,
+} from "../../lib/types";
+import {
+  GetCapacityBedData,
+  GetFinalTotalData,
+  InventoryTimeToEmpty,
+  toDateString,
+} from "../../utils/parser";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { processFacilityData } from "../../lib/common/processor";

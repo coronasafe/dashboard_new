@@ -19,7 +19,7 @@ export const ValuePill: React.FC<ValuePillProps> = ({ title, value = 0 }) => {
   });
 
   return (
-    <div className="flex items-center justify-between bg-white dark:text-gray-200 dark:bg-black rounded-lg shadow-xs">
+    <div className="flex items-center justify-between bg-white dark:text-gray-200 dark:bg-gray-800 rounded-lg shadow-xs">
       <span className="block mx-3 text-xs font-medium xl:text-base py-1">
         {title}
       </span>

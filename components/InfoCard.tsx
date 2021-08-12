@@ -15,8 +15,10 @@ export function InfoCard({ title = "", value = 0, delta = 0, small = false }) {
     config: config.slow,
   });
 
+  const isDeltaPositive = _delta.get() > 0;
+
   return (
-    <Card className="bg-white dark:bg-black rounded-xl md:p-3">
+    <Card className={clsx("rounded-xl", small ? "p-0" : "md:p-3")}>
       <CardBody className="flex flex-col">
         <div>
           <p
@@ -30,7 +32,7 @@ export function InfoCard({ title = "", value = 0, delta = 0, small = false }) {
           <div className="flex">
             <animated.p
               className={clsx(
-                small ? "text-base" : "text-4xl",
+                small ? "text-2xl" : "text-4xl",
                 "dark:text-gray-200 text-gray-700"
               )}
             >
@@ -40,12 +42,12 @@ export function InfoCard({ title = "", value = 0, delta = 0, small = false }) {
               <div
                 className={clsx(
                   "flex items-start ml-2",
-                  _delta.get() > 0
+                  isDeltaPositive
                     ? "text-green-400 dark:text-green-500"
                     : "text-red-500"
                 )}
               >
-                {_delta.get() > 0 ? (
+                {isDeltaPositive ? (
                   <ArrowUp strokeWidth="1.5px" />
                 ) : (
                   <ArrowDown strokeWidth="1.5px" />

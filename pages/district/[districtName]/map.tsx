@@ -5,7 +5,7 @@ import GMap from "../../../components/GMap/GMap";
 import { ACTIVATED_DISTRICTS } from "../../../lib/common";
 import { careSummary, CareSummaryResponse } from "../../../lib/types";
 import { capacityMockData } from "../../../utils/mock/capacity";
-import { GetDistrictName, Parameterize } from "../../../utils/parser";
+import { getDistrictName, parameterize } from "../../../utils/parser";
 import Capacity from "./capacity";
 
 const Map = () => {
@@ -31,7 +31,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const district = ACTIVATED_DISTRICTS.find(
     (obj) =>
-      Parameterize(obj.name) === Parameterize(params?.districtName as string)
+      parameterize(obj.name) === parameterize(params?.districtName as string)
   );
 
   if (district) {
@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     return {
       props: {
         data,
-        districtName: Parameterize(district.name),
+        districtName: parameterize(district.name),
       },
     };
   }

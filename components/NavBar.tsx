@@ -42,7 +42,7 @@ const NavBar: React.FunctionComponent<NavBarProps> = () => {
           {mode === "dark" ? (
             <Sun className={`w-5 h-5`} color="yellow" aria-hidden="true" />
           ) : (
-            <Moon className={`w-5 h-5`} aria-hidden="true" />
+            <Moon className={`w-5 h-5`} color="blue" aria-hidden="true" />
           )}
         </button>
       </div>

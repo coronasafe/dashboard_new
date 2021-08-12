@@ -13,10 +13,10 @@ import {
 } from "../../../lib/common";
 import { careSummary, CareSummaryResponse } from "../../../lib/types";
 import {
-  GetCapacityBedData,
-  GetFinalTotalData,
-  Parameterize,
-  ToDateString,
+  getCapacityBedData,
+  getFinalTotalData,
+  parameterize,
+  toDateString,
 } from "../../../utils/parser";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import GMap from "../../../components/GMap/GMap";
@@ -174,7 +174,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const district = ACTIVATED_DISTRICTS.find(
     (obj) =>
-      Parameterize(obj.name) === Parameterize(params?.districtName as string)
+      parameterize(obj.name) === parameterize(params?.districtName as string)
   );
 
   if (!district) {

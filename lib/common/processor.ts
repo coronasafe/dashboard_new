@@ -1,6 +1,6 @@
 import { OXYGEN_INVENTORY } from ".";
 import { FacilityData, FacilitySummary, Inventory } from "../types";
-import { InventoryTimeToEmpty, ToDateString } from "../../utils/parser";
+import { InventoryTimeToEmpty, toDateString } from "../../utils/parser";
 
 export const processFacilityData = (facilities: FacilitySummary[]) => {
   const facility = facilities.filter((obj) => obj.facility);
@@ -59,7 +59,7 @@ export const processFacilityData = (facilities: FacilitySummary[]) => {
 
   return facility.map(({ data, created_date, facility, modified_date }) => {
     return {
-      date: ToDateString(new Date(created_date)),
+      date: toDateString(new Date(created_date)),
       id: facility.id || null,
       name: facility.name || null,
       address: facility.address || null,
