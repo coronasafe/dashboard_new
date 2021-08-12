@@ -1,0 +1,50 @@
+.rc-table {
+  @apply rounded-xl overflow-hidden dark:text-gray-300 text-gray-600;
+}
+.rc-table-rtl {
+  direction: rtl;
+}
+.rc-table table {
+  width: 100%;
+  overflow: auto;
+}
+
+.rc-table-rtl.rc-table th,
+.rc-table-rtl.rc-table td {
+  border-right: 0;
+}
+.rc-table-cell-fix-left,
+.rc-table-cell-fix-right {
+  z-index: 1;
+}
+.rc-table thead td,
+.rc-table thead th {
+  text-align: center;
+  @apply bg-primary-500 text-white font-normal text-sm p-4;
+}
+
+.rc-table-rtl.rc-table thead .rc-table-cell-scrollbar::after {
+  right: -1px;
+  left: auto;
+}
+.rc-table-header {
+  overflow: auto;
+}
+.rc-table-placeholder {
+  text-align: center;
+}
+.rc-table tbody tr td,
+.rc-table tbody tr th {
+  @apply p-4 align-top border-b-2 border-gray-50 dark:border-gray-900;
+}
+.rc-table-row {
+  @apply bg-white dark:bg-black transition-colors;
+}
+.rc-table-row:hover {
+  @apply bg-gray-100 dark:bg-gray-900;
+}
+
+.rc-table-sticky-holder {
+  position: sticky;
+  z-index: 2;
+}
