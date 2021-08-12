@@ -19,7 +19,10 @@ export const GenericTable: React.FC<GenericTableProps> = ({
     <Table
       data={data}
       columns={columns}
-      scroll={{ x: 1500, y: window?.innerHeight }}
+      scroll={{
+        x: 1500,
+        y: process.browser ? window?.innerHeight : undefined,
+      }}
       sticky={true}
     />
   );
