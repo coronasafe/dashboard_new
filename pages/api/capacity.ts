@@ -15,93 +15,9 @@ import {
 } from "../../utils/parser";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { processFacilityData } from "../../lib/common/processor";
 
 dayjs.extend(relativeTime);
-
-const processFacilityData = (facilities: FacilitySummary[]) => {
-  const facility = facilities.filter((obj) => obj.facility);
-
-  const additionalData = (data: FacilityData) => {
-    if (data.availability) {
-      const capacity = data.availability.reduce(
-        (accumulator, obj) => ({
-          ...accumulator,
-          [obj.room_type]: obj,
-        }),
-        {}
-      );
-
-      return {
-        capacity,
-        oxygenCapacity: data.oxygen_capacity,
-        type_b_cylinders: data.type_b_cylinders,
-        type_c_cylinders: data.type_c_cylinders,
-        type_d_cylinders: data.type_d_cylinders,
-        expected_oxygen_requirement: data.expected_oxygen_requirement,
-        expected_type_b_cylinders: data.expected_type_b_cylinders,
-        expected_type_c_cylinders: data.expected_type_c_cylinders,
-        expected_type_d_cylinders: data.expected_type_d_cylinders,
-        actualDischargedPatients: data.actual_discharged_patients,
-        actualLivePatients: data.actual_live_patients,
-        tte_tank: Number(
-          InventoryTimeToEmpty(
-            (data.inventory &&
-              data.inventory[OXYGEN_INVENTORY.liquid]) as Inventory
-          ) || -1
-        ),
-        tte_d_cylinders: Number(
-          InventoryTimeToEmpty(
-            (data.inventory &&
-              data.inventory[OXYGEN_INVENTORY.type_d]) as Inventory
-          ) || -1
-        ),
-        tte_c_cylinders: Number(
-          InventoryTimeToEmpty(
-            (data.inventory &&
-              data.inventory[OXYGEN_INVENTORY.type_c]) as Inventory
-          ) || -1
-        ),
-        tte_b_cylinders: Number(
-          InventoryTimeToEmpty(
-            (data.inventory &&
-              data.inventory[OXYGEN_INVENTORY.type_b]) as Inventory
-          ) || -1
-        ),
-      };
-    }
-
-    return { ...data };
-  };
-
-  return facility.map(({ data, created_date, facility, modified_date }) => {
-    return {
-      date: toDateString(new Date(created_date)),
-      id: facility.id,
-      name: facility.name,
-      address: facility.address,
-      districtId: facility.district,
-      facilityType: facility.facility_type || "Unknown",
-      location: facility.location,
-      phoneNumber: facility.phone_number,
-      inventory: data.inventory,
-      modifiedDate:
-        data.availability && data.availability.length !== 0
-          ? // @ts-ignore
-            Math.max(...data.availability.map((a) => new Date(a.modified_date)))
-          : data.modified_date || modified_date,
-      inventoryModifiedDate:
-        data.inventory && Object.keys(data.inventory).length !== 0
-          ? Math.max(
-              // @ts-ignore
-              ...Object.values(data.inventory).map(
-                (a) => new Date(a.modified_date)
-              )
-            )
-          : data.modified_date || modified_date,
-      ...additionalData(data),
-    };
-  });
-};
 
 const processCapacityData = (facilities: FacilitySummary[]) => {
   // @ts-ignore I've got no idea what actually happens here.

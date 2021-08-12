@@ -18,7 +18,7 @@ const Patient = () => {
   return (
     <div className="container mx-auto px-4">
       <ContentNav />
-      <div className="grid gap-1 grid-rows-none mb-8 sm:grid-flow-col-dense sm:grid-rows-1 sm:place-content-end">
+      <div className="grid gap-1 grid-rows-none mb-8 sm:grid-flow-col-dense sm:grid-rows-1 sm:place-content-end my-5">
         <ValuePill title="Facility Count" value={123} />
       </div>
       {district && <PatientSummaryPage district={district} />}
