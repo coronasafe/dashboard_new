@@ -1,10 +1,10 @@
 import { useRouter } from "next/router";
 import ContentNav from "../../../components/ContentNav";
-import PatientSummary from "../../../components/Patient/PatientSummary";
+
 import { ValuePill } from "../../../components/Pill";
-import { getDistrict, getDistrictName } from "../../../utils/parser";
-import useSWR from "swr";
+import { getDistrict } from "../../../utils/parser";
 import Loader from "../../../lib/assets/icons/LoaderIcon";
+import PatientSummaryPage from "../../../components/Patient/PatientSummary";
 
 const Patient = () => {
   const router = useRouter();
@@ -21,7 +21,7 @@ const Patient = () => {
       <div className="grid gap-1 grid-rows-none mb-8 sm:grid-flow-col-dense sm:grid-rows-1 sm:place-content-end">
         <ValuePill title="Facility Count" value={123} />
       </div>
-      {district && <PatientSummary district={district} />}
+      {district && <PatientSummaryPage district={district} />}
     </div>
   );
 };
