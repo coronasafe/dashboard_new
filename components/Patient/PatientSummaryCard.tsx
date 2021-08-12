@@ -20,8 +20,6 @@ const PatientSummaryCard: React.FC<PatientSummaryCardProps> = ({
     config: config.slow,
   });
 
-  const isDeltaPositive = _delta.get() > 0;
-
   return (
     <Card className="bg-white dark:bg-gray-800 rounded-xl ring-2 ring-gray-200 dark:ring-gray-800 px-3 py-1">
       <CardBody className="flex flex-col">
@@ -36,8 +34,8 @@ const PatientSummaryCard: React.FC<PatientSummaryCardProps> = ({
           </animated.p>
           <div className="flex items-start ml-2 text-green-600 dark:text-green-400">
             {/* Arrow Indicator */}
-            {isDeltaPositive && <ArrowUp strokeWidth="1.5px" />}
-            {!isDeltaPositive && <ArrowDown strokeWidth="1.5px" />}
+            {_delta.get() >= 0 && <ArrowUp strokeWidth="1.5px" />}
+            {_delta.get() < 0 && <ArrowDown strokeWidth="1.5px" />}
             {/* Animated Delta Value */}
             <animated.span className="text-base">
               {_delta.to((y) => Math.abs(Math.round(y)))}
