@@ -4,6 +4,7 @@ import PatientSummary from "../../../components/Patient/PatientSummary";
 import { ValuePill } from "../../../components/Pill";
 import { getDistrict, getDistrictName } from "../../../utils/parser";
 import useSWR from "swr";
+import Loader from "../../../lib/assets/icons/LoaderIcon";
 
 const Patient = () => {
   const router = useRouter();
@@ -12,7 +13,7 @@ const Patient = () => {
 
   const district = getDistrict(districtName?.toString());
 
-  if (!district) return <></>;
+  if (!district) return <Loader />;
 
   return (
     <div className="container mx-auto px-4">
