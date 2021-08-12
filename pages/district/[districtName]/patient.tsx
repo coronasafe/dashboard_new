@@ -13,7 +13,7 @@ const Patient = () => {
   return (
     <div className="container mx-auto px-4">
       <ContentNav />
-      <div className="grid gap-1 grid-rows-none mb-8 sm:grid-flow-col-dense sm:grid-rows-1 sm:place-content-end">
+      <div className="grid gap-1 grid-rows-none mb-8 sm:grid-flow-col-dense sm:grid-rows-1 sm:place-content-end my-5">
         <ValuePill title="Facility Count" value={123} />
       </div>
       <div className="grid grid-col-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8 ">
@@ -23,10 +23,8 @@ const Patient = () => {
               <InfoCard
                 key={i}
                 title={value}
-                //@ts-ignore
                 value={Math.random() * 500 + 200}
                 delta={
-                  //@ts-ignore
                   (Math.random() * 100 + 50) * (Math.random() > 0.5 ? -1 : 1)
                 }
               />

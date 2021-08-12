@@ -1,5 +1,5 @@
 import { Card, CardBody } from "@windmill/react-ui";
-import clsx from "clsx";
+import clsx from "classnames";
 import React from "react";
 import { ArrowDown, ArrowUp, ChevronsUp } from "react-feather";
 import { animated, config, useSpring } from "react-spring";
