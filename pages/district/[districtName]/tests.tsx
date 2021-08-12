@@ -1,8 +1,12 @@
+import { Button, Input } from "@windmill/react-ui";
 import { useRouter } from "next/router";
+import React from "react";
 import ContentNav from "../../../components/ContentNav";
 import { InfoCard } from "../../../components/InfoCard";
 import { ValuePill } from "../../../components/Pill";
+import { GenericTable } from "../../../components/Table";
 import { TESTS_TYPES } from "../../../lib/common";
+import { columns, data } from "../../../utils/mock/GenericTableData";
 import { getDistrictName } from "../../../utils/parser";
 
 const Tests = () => {
@@ -35,6 +39,24 @@ const Tests = () => {
             );
           }
         })}
+      </div>
+      <div className="py-12">
+        <div className="items-center flex flex-col justify-between md:flex-row mb-4">
+          <h1 className="dark:text-gray-100 text-3xl">Facilities</h1>
+          <div className="flex max-w-full space-x-4">
+            {true && (
+              // <CSVLink data={exported.data} filename={exported.filename}>
+              <Button block>Export</Button>
+              // </CSVLink>
+            )}
+            <Input
+              css={{}}
+              className="sw-40 rounded-lg sm:w-auto"
+              placeholder="Search Facility"
+            />
+          </div>
+        </div>
+        <GenericTable columns={columns} data={data} />
       </div>
     </div>
   );
