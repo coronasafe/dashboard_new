@@ -102,7 +102,7 @@ const Capacity: React.FC<CapacityProps> = ({
           </Pill>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 my-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 my-5">
           {AVAILABILITY_TYPES_TOTAL_ORDERED.map((k) => (
             <RadialCard
               label={k.name}
