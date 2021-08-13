@@ -1,4 +1,4 @@
-//@ts-nocheck
+// @ts-nocheck
 import { ArrowRight } from "react-feather";
 import { Button, Input, Pagination } from "@windmill/react-ui";
 import { RadialCard } from "../../../components/Charts";
@@ -20,7 +20,6 @@ import {
 } from "../../../utils/parser";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import GMap from "../../../components/GMap/GMap";
-import { capacityMockData } from "../../../utils/mock/capacity";
 import { useEffect, useState } from "react";
 import { CapacityCard } from "../../../components/CapacityCard";
 import { processFacilityData } from "../../../lib/common/processor";
@@ -188,7 +187,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const filtered = processFacilityData(data.results);
   const facilitiesTrivia = filtered.reduce(
     (a, c) => {
-      const key = c.date === ToDateString(date) ? "current" : "previous";
+      const key = c.date === toDateString(date) ? "current" : "previous";
       a[key].count += 1;
       a[key].oxygen += c.oxygenCapacity || 0;
       a[key].actualLivePatients += c.actualLivePatients || 0;
@@ -217,7 +216,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   );
   const exported = {
     data: filtered.reduce((a, c) => {
-      if (c.date !== ToDateString(date)) {
+      if (c.date !== toDateString(date)) {
         return a;
       }
       return [
@@ -246,11 +245,11 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 
   const capacityCardData = filtered.reduce((acc, facility) => {
-    const covidData = GetCapacityBedData([30, 120, 110, 100], facility);
-    const nonCovidData = GetCapacityBedData([1, 150, 10, 20], facility);
-    const finalTotalData = GetFinalTotalData(covidData, nonCovidData);
+    const covidData = getCapacityBedData([30, 120, 110, 100], facility);
+    const nonCovidData = getCapacityBedData([1, 150, 10, 20], facility);
+    const finalTotalData = getFinalTotalData(covidData, nonCovidData);
     const noCapacity = finalTotalData.every((item) => item.total === 0);
-    if (facility.date !== ToDateString(date) || noCapacity) {
+    if (facility.date !== toDateString(date) || noCapacity) {
       return acc;
     }
     return [
@@ -270,7 +269,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     ];
   }, []);
-  const todayFiltered = filtered.filter((f) => f.date === ToDateString(date));
+  const todayFiltered = filtered.filter((f) => f.date === toDateString(date));
 
   return {
     props: {

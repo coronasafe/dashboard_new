@@ -8,8 +8,8 @@ import {
   Inventory,
 } from "../../lib/types";
 import {
-  GetCapacityBedData,
-  GetFinalTotalData,
+  getCapacityBedData,
+  getFinalTotalData,
   InventoryTimeToEmpty,
   toDateString,
 } from "../../utils/parser";
@@ -22,9 +22,9 @@ dayjs.extend(relativeTime);
 const processCapacityData = (facilities: FacilitySummary[]) => {
   // @ts-ignore I've got no idea what actually happens here.
   return facilities.reduce((acc, { facility }) => {
-    const covidData = GetCapacityBedData([30, 120, 110, 100], facility);
-    const nonCovidData = GetCapacityBedData([1, 150, 10, 20], facility);
-    const finalTotalData = GetFinalTotalData(covidData, nonCovidData);
+    const covidData = getCapacityBedData([30, 120, 110, 100], facility);
+    const nonCovidData = getCapacityBedData([1, 150, 10, 20], facility);
+    const finalTotalData = getFinalTotalData(covidData, nonCovidData);
     const noCapacity = finalTotalData.every((item) => item.total === 0);
 
     if (noCapacity) {

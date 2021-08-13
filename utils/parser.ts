@@ -55,7 +55,7 @@ interface CapacityBedData {
   vacant: number;
 }
 
-export const GetCapacityBedData = (
+export const getCapacityBedData = (
   ids: Array<number>,
   facility: FacilityData
 ): CapacityBedData[] => {
@@ -82,7 +82,7 @@ export const GetCapacityBedData = (
   });
 };
 
-export const GetFinalTotalData = (
+export const getFinalTotalData = (
   covid: CapacityBedData[],
   nonCovid: CapacityBedData[]
 ) => {
