@@ -5,7 +5,7 @@ import { ColumnsType, DefaultRecordType } from "rc-table/lib/interface";
 interface GenericTableProps {
   data: DefaultRecordType[];
   columns: ColumnsType<DefaultRecordType>;
-  scroll: {
+  scroll?: {
     x?: string | number | true;
     y?: string | number;
   };
