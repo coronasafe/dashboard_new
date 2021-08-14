@@ -5,6 +5,7 @@ import ContentNav from "../../../components/ContentNav";
 import { InfoCard } from "../../../components/InfoCard";
 import { ValuePill } from "../../../components/Pill";
 import { GenericTable } from "../../../components/Table";
+import { TableExportHeader } from "../../../components/TableExportHeader";
 import { PATIENT_TYPES, TESTS_TYPES } from "../../../lib/common";
 import { columns, data } from "../../../utils/mock/GenericTableData";
 import { getDistrictName } from "../../../utils/parser";
@@ -40,21 +41,12 @@ const LSG = () => {
         })}
       </div>
       <div className="py-12">
-        <div className="items-center flex flex-col justify-between md:flex-row mb-4">
-          <h1 className="dark:text-gray-100 text-3xl">LSG</h1>
-          <div className="flex max-w-full space-x-4">
-            {true && (
-              // <CSVLink data={exported.data} filename={exported.filename}>
-              <Button block>Export</Button>
-              // </CSVLink>
-            )}
-            <Input
-              css={{}}
-              className="sw-40 rounded-lg sm:w-auto"
-              placeholder="Search Facility"
-            />
-          </div>
-        </div>
+        <TableExportHeader
+          label="LSG"
+          searchValue={""}
+          setSearchValue={() => {}}
+          className="mb-2"
+        />
         <GenericTable columns={columns} data={data} />
       </div>
     </div>

@@ -25,6 +25,7 @@ import { CapacityCard } from "../../../components/CapacityCard";
 import { processFacilityData } from "../../../lib/common/processor";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { TableExportHeader } from "../../../components/TableExportHeader";
 
 dayjs.extend(relativeTime);
 
@@ -102,7 +103,7 @@ const Capacity: React.FC<CapacityProps> = ({
           </Pill>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 my-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 my-5">
           {AVAILABILITY_TYPES_TOTAL_ORDERED.map((k) => (
             <RadialCard
               label={k.name}
@@ -129,28 +130,14 @@ const Capacity: React.FC<CapacityProps> = ({
       </section>
       <section id="facility-capacity">
         <div id="facility-capacity-cards" className="mb-16 mt-16">
-          <div className="items-center flex flex-col justify-between md:flex-row">
-            <h1 className="dark:text-gray-100 text-3xl mb-4">Facilities</h1>
-            <div className="flex max-w-full space-x-4">
-              {true && (
-                // <CSVLink data={exported.data} filename={exported.filename}>
-                <Button block>Export</Button>
-                // </CSVLink>
-              )}
-              <Input
-                css={{}}
-                className="sw-40 rounded-lg sm:w-auto"
-                placeholder="Search Facility"
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-              />
-            </div>
-          </div>
-
+          <TableExportHeader
+            label="Facilities"
+            searchValue={searchTerm}
+            setSearchValue={setSearchTerm}
+          />
           {tableData.map((tData, index) => (
             <CapacityCard data={tData} key={index} />
           ))}
-
           <Pagination
             resultsPerPage={10}
             totalResults={capacityCardData.length}
