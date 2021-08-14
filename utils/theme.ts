@@ -113,7 +113,7 @@ const theme = {
   },
   // Card
   card: {
-    base: "min-w-0 rounded-lg shadow-xs overflow-hidden",
+    base: "min-w-0 rounded-2xl shadow-xs overflow-hidden",
     default: "bg-white dark:bg-black",
   },
   cardBody: {
