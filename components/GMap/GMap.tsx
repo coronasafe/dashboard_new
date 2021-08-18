@@ -105,7 +105,7 @@ const GMap: React.FC<GMapProps> = ({ district, facilities, className }) => {
               Show All
             </button>
             {AVAILABILITY_TYPES_ORDERED.filter(
-              (n) => ![40, 50, 60, 70].includes(n)
+              (key) => ![40, 50, 60, 70].includes(key)
             ).map((a) => (
               <button
                 key={a}
