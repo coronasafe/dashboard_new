@@ -155,3 +155,26 @@ export const CONTENT = {
   OXYGEN: 7,
   MAP: 8,
 };
+
+export const INITIAL_FACILITIES_TRIVIA = {
+  20: { total: 0, used: 0 },
+  10: { total: 0, used: 0 },
+  150: { total: 0, used: 0 },
+  1: { total: 0, used: 0 },
+  70: { total: 0, used: 0 },
+  50: { total: 0, used: 0 },
+  60: { total: 0, used: 0 },
+  40: { total: 0, used: 0 },
+  100: { total: 0, used: 0 },
+  110: { total: 0, used: 0 },
+  120: { total: 0, used: 0 },
+  30: { total: 0, used: 0 },
+  1111: { total: 0, used: 0 },
+  2222: { total: 0, used: 0 },
+  3333: { total: 0, used: 0 },
+  4444: { total: 0, used: 0 },
+  actualDischargedPatients: 0,
+  actualLivePatients: 0,
+  count: 0,
+  oxygen: 0,
+};
