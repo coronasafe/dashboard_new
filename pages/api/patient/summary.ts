@@ -33,7 +33,7 @@ const processPatientData = (facilities: FacilitySummary[]) => {
 };
 
 const handler = async (req: VercelRequest, res: VercelResponse) => {
-  const districtId = parseInt(req.query.districtId.toString());
+  const districtId = parseInt(req.query.districtId as string);
 
   if (!districtId) return APIResponder("ERROR", res);
 
