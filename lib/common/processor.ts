@@ -101,7 +101,9 @@ export const processFacilityData = (facilities: FacilitySummary[]) => {
   });
 };
 
-export const processFacilityTrivia = (facility: typeof processFacilityData) => {
+export const processFacilityTriviaForCapacity = (
+  facility: typeof processFacilityData
+) => {
   const date = new Date();
   // @ts-ignore
   return facility.reduce(
@@ -136,7 +138,7 @@ export const processFacilityTrivia = (facility: typeof processFacilityData) => {
   );
 };
 
-export const processCapacityCardData = (
+export const processCapacityCardDataForCapacity = (
   facilities: typeof processFacilityData
 ) => {
   const date = new Date();

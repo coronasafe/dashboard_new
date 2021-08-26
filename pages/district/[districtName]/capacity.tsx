@@ -12,15 +12,16 @@ import {
   GOVT_FACILITY_TYPES,
 } from "../../../lib/common";
 import { careSummary, CareSummaryResponse } from "../../../lib/types";
-import {
-  parameterize,
-  toDateString,
-} from "../../../utils/parser";
+import { parameterize, toDateString } from "../../../utils/parser";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import GMap from "../../../components/GMap/GMap";
 import { useEffect, useState } from "react";
 import { CapacityCard } from "../../../components/CapacityCard";
-import { processCapacityCardData, processFacilityData, processFacilityTrivia } from "../../../lib/common/processor";
+import {
+  processCapacityCardDataForCapacity,
+  processFacilityData,
+  processFacilityTriviaForCapacity,
+} from "../../../lib/common/processor";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { TableExportHeader } from "../../../components/TableExportHeader";
@@ -148,8 +149,8 @@ export const getServerSideProps: GetServerSideProps = async ({
   const data = await careSummary("facility", district.id);
 
   const filtered = processFacilityData(data.results);
-  const facilitiesTrivia = processFacilityTrivia(filtered);
-  const capacityCardData = processCapacityCardData(filtered);
+  const facilitiesTrivia = processFacilityTriviaForCapacity(filtered);
+  const capacityCardData = processCapacityCardDataForCapacity(filtered);
   const todayFiltered = filtered.filter((f) => f.date === toDateString(date));
 
   const exported = {
@@ -190,7 +191,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       facilitiesTrivia,
       filtered,
       todayFiltered,
-      exported
+      exported,
     },
   };
 };
