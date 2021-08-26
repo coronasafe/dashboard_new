@@ -3,9 +3,7 @@ import { ColumnType, DefaultRecordType } from "rc-table/lib/interface";
 const TempTableRow = () => (
   <div>
     <a href="#">FHC KODANAD KOOVAPPADY CMC HOMECARE</a>
-
     <p className="text-gray-400 mb-2">Covid Management Center</p>
-
     <p>+919020411789</p>
   </div>
 );
