@@ -147,7 +147,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   console.log(data);
 
-  const filtered = processFacilityData(data.results);
+  const filtered = processFacilityData(data?.results);
   const facilityTrivia = filtered.reduce(
     (a, c) => {
       const key = c.date === toDateString(date) ? "current" : "previous";

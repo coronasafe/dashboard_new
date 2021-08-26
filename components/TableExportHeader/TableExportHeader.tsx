@@ -24,7 +24,7 @@ export const TableExportHeader: React.FC<TableExportHeaderProps> = ({
         className
       )}
     >
-      <h1 className="dark:text-gray-100 text-3xl mb-4">{label}</h1>
+      <h1 className="dark:text-gray-100 text-3xl">{label}</h1>
       <div className="flex max-w-full space-x-4">
         {true && (
           // <CSVLink data={exported.data} filename={exported.filename}>

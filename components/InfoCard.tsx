@@ -28,7 +28,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
     config: config.slow,
   });
 
-  const isDeltaPositive = _delta.get() > 0;
+  const isDeltaPositive = delta > 0;
 
   return (
     <Card className={clsx("rounded-xl", small ? "p-0" : "md:p-3")}>
