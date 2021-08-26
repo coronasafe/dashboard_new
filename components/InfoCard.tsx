@@ -4,7 +4,20 @@ import React from "react";
 import { ArrowDown, ArrowUp, ChevronsUp } from "react-feather";
 import { animated, config, useSpring } from "react-spring";
 
-export function InfoCard({ title = "", value = 0, delta = 0, small = false }) {
+interface InfoCardProps {
+  title: string;
+  value: number;
+  delta?: number;
+  small?: boolean;
+  unit?: string;
+}
+
+export const InfoCard: React.FC<InfoCardProps> = ({
+  title = "",
+  value = 0,
+  delta = 0,
+  small = false,
+}) => {
   const { _value, _delta } = useSpring({
     from: { _value: 0, _delta: 0 },
     to: {
@@ -38,7 +51,7 @@ export function InfoCard({ title = "", value = 0, delta = 0, small = false }) {
             >
               {_value.to((x) => Math.round(x))}
             </animated.p>
-            {delta !== null && (
+            {delta !== 0 && (
               <div
                 className={clsx(
                   "flex items-start ml-2",
@@ -68,4 +81,4 @@ export function InfoCard({ title = "", value = 0, delta = 0, small = false }) {
       </CardBody>
     </Card>
   );
-}
+};
