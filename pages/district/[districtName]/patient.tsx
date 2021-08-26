@@ -5,6 +5,8 @@ import { ValuePill } from "../../../components/Pill";
 import { getDistrict } from "../../../utils/parser";
 import Loader from "../../../lib/assets/icons/LoaderIcon";
 import PatientSummaryPage from "../../../components/Patient/PatientSummary";
+import { TableExportHeader } from "../../../components/TableExportHeader";
+import { BedsSummery } from "../../../components/Patient/BedsSummery";
 
 const Patient = () => {
   const router = useRouter();
@@ -22,6 +24,15 @@ const Patient = () => {
         <ValuePill title="Facility Count" value={123} />
       </div>
       {district && <PatientSummaryPage district={district} />}
+
+      <TableExportHeader
+        label="Facilities"
+        searchValue=""
+        setSearchValue={() => {}}
+      />
+      <BedsSummery />
+      <BedsSummery />
+      <BedsSummery />
     </div>
   );
 };
