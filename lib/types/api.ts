@@ -183,6 +183,9 @@ const careSummary: CareSummary = async (
         district,
         limit,
       },
+      headers: {
+        Accept: "application/json",
+      },
     })
     .then((response) => response.data)
     .catch(console.log);
@@ -200,6 +203,9 @@ const individualCareSummary: IndividualCareSummary = async (
         start_date,
         end_date,
         facility,
+      },
+      headers: {
+        Accept: "application/json",
       },
     })
     .then((response) => response.data)

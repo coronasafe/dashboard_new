@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { ArrowRight } from "react-feather";
-import { Button, Input, Pagination } from "@windmill/react-ui";
+import { Button, Pagination } from "@windmill/react-ui";
 import { RadialCard } from "../../../components/Charts";
 import ContentNav from "../../../components/ContentNav";
 import { Pill, ValuePill } from "../../../components/Pill";
@@ -12,17 +12,16 @@ import {
   GOVT_FACILITY_TYPES,
 } from "../../../lib/common";
 import { careSummary, CareSummaryResponse } from "../../../lib/types";
-import {
-  getCapacityBedData,
-  getFinalTotalData,
-  parameterize,
-  toDateString,
-} from "../../../utils/parser";
+import { parameterize, toDateString } from "../../../utils/parser";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import GMap from "../../../components/GMap/GMap";
 import { useEffect, useState } from "react";
 import { CapacityCard } from "../../../components/CapacityCard";
-import { processFacilityData } from "../../../lib/common/processor";
+import {
+  processCapacityCardDataForCapacity,
+  processFacilityData,
+  processFacilityTriviaForCapacity,
+} from "../../../lib/common/processor";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { TableExportHeader } from "../../../components/TableExportHeader";
@@ -33,29 +32,6 @@ interface CapacityProps {
   districtName: string;
   data: CareSummaryResponse;
 }
-
-const initialFacilitiesTrivia = {
-  20: { total: 0, used: 0 },
-  10: { total: 0, used: 0 },
-  150: { total: 0, used: 0 },
-  1: { total: 0, used: 0 },
-  70: { total: 0, used: 0 },
-  50: { total: 0, used: 0 },
-  60: { total: 0, used: 0 },
-  40: { total: 0, used: 0 },
-  100: { total: 0, used: 0 },
-  110: { total: 0, used: 0 },
-  120: { total: 0, used: 0 },
-  30: { total: 0, used: 0 },
-  1111: { total: 0, used: 0 },
-  2222: { total: 0, used: 0 },
-  3333: { total: 0, used: 0 },
-  4444: { total: 0, used: 0 },
-  actualDischargedPatients: 0,
-  actualLivePatients: 0,
-  count: 0,
-  oxygen: 0,
-};
 
 const Capacity: React.FC<CapacityProps> = ({
   capacityCardData,
@@ -103,7 +79,7 @@ const Capacity: React.FC<CapacityProps> = ({
           </Pill>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 my-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 my-5">
           {AVAILABILITY_TYPES_TOTAL_ORDERED.map((k) => (
             <RadialCard
               label={k.name}
@@ -171,36 +147,12 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const date = new Date();
   const data = await careSummary("facility", district.id);
+
   const filtered = processFacilityData(data.results);
-  const facilitiesTrivia = filtered.reduce(
-    (a, c) => {
-      const key = c.date === toDateString(date) ? "current" : "previous";
-      a[key].count += 1;
-      a[key].oxygen += c.oxygenCapacity || 0;
-      a[key].actualLivePatients += c.actualLivePatients || 0;
-      a[key].actualDischargedPatients += c.actualDischargedPatients || 0;
-      Object.keys(AVAILABILITY_TYPES).forEach((k) => {
-        a[key][k].used += c.capacity[k]?.current_capacity || 0;
-        a[key][k].total += c.capacity[k]?.total_capacity || 0;
-      });
+  const facilitiesTrivia = processFacilityTriviaForCapacity(filtered);
+  const capacityCardData = processCapacityCardDataForCapacity(filtered);
+  const todayFiltered = filtered.filter((f) => f.date === toDateString(date));
 
-      AVAILABILITY_TYPES_TOTAL_ORDERED.forEach((k) => {
-        const current_covid = c.capacity[k.covid]?.current_capacity || 0;
-        const current_non_covid =
-          c.capacity[k.non_covid]?.current_capacity || 0;
-        const total_covid = c.capacity[k.covid]?.total_capacity || 0;
-        const total_non_covid = c.capacity[k.non_covid]?.total_capacity || 0;
-        a[key][k.id].used += current_covid + current_non_covid;
-        a[key][k.id].total += total_covid + total_non_covid;
-      });
-
-      return a;
-    },
-    {
-      current: JSON.parse(JSON.stringify(initialFacilitiesTrivia)),
-      previous: JSON.parse(JSON.stringify(initialFacilitiesTrivia)),
-    }
-  );
   const exported = {
     data: filtered.reduce((a, c) => {
       if (c.date !== toDateString(date)) {
@@ -231,33 +183,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     filename: "capacity_export.csv",
   };
 
-  const capacityCardData = filtered.reduce((acc, facility) => {
-    const covidData = getCapacityBedData([30, 120, 110, 100], facility);
-    const nonCovidData = getCapacityBedData([1, 150, 10, 20], facility);
-    const finalTotalData = getFinalTotalData(covidData, nonCovidData);
-    const noCapacity = finalTotalData.every((item) => item.total === 0);
-    if (facility.date !== toDateString(date) || noCapacity) {
-      return acc;
-    }
-    return [
-      ...acc,
-      {
-        facility_name: facility.name,
-        facility_id: facility.id,
-        facility_type: facility.facilityType,
-        phone_number: facility.phoneNumber,
-        last_updated: dayjs(facility.modifiedDate).fromNow(),
-        patient_discharged: `${facility.actualLivePatients || 0}/${
-          facility.actualDischargedPatients || 0
-        }`,
-        covid: covidData,
-        non_covid: nonCovidData,
-        final_total: finalTotalData,
-      },
-    ];
-  }, []);
-  const todayFiltered = filtered.filter((f) => f.date === toDateString(date));
-
   return {
     props: {
       data,
@@ -266,6 +191,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       facilitiesTrivia,
       filtered,
       todayFiltered,
+      exported,
     },
   };
 };
