@@ -55,6 +55,8 @@ export interface FacilityData {
   today_patients_bed_with_oxygen_support: number;
   today_patients_icu_with_oxygen_support: number;
   total_patients_bed_with_oxygen_support: number;
+  today_patients_icu: number;
+  total_patients_icu: number;
   total_patients_icu_with_oxygen_support: number;
   today_patients_icu_with_invasive_ventilator: number;
   total_patients_icu_with_invasive_ventilator: number;
