@@ -40,23 +40,23 @@ export const getDaysAfter = (n: number) => {
   return dayjs().add(n, "days").toDate();
 };
 
-export const InventoryTimeToEmpty = (inventoryItem: Inventory) =>
+export const InventoryTimeToEmpty = (inventoryItem?: Inventory) =>
   inventoryItem &&
   inventoryItem.stock &&
   inventoryItem.burn_rate &&
   inventoryItem.burn_rate !== undefined &&
   Math.round(inventoryItem.burn_rate ?? 0) !== 0
-    ? (inventoryItem?.stock / inventoryItem?.burn_rate).toFixed(2)
+    ? Number((inventoryItem?.stock / inventoryItem?.burn_rate).toFixed(2))
     : -1;
 
-interface CapacityBedData {
+export interface CapacityBedData {
   used: number;
   total: number;
   vacant: number;
 }
 
 export const getCapacityBedData = (
-  ids: Array<number>,
+  ids: (string | number)[],
   facility: FacilityData
 ): CapacityBedData[] => {
   return ids.map((i) => {
@@ -85,7 +85,7 @@ export const getCapacityBedData = (
 export const getFinalTotalData = (
   covid: CapacityBedData[],
   nonCovid: CapacityBedData[]
-) => {
+): CapacityBedData[] => {
   return covid.map((val, idx) => {
     const used = val.used + nonCovid[idx].used;
     const total = val.total + nonCovid[idx].total;

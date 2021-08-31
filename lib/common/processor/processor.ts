@@ -23,6 +23,7 @@ import {
   Inventory,
 } from "../../types";
 import { CapacityCardDataForCapacity } from "./types";
+import { COVID_BEDS, NON_COVID_BEDS } from "..";
 
 dayjs.extend(relativeTime);
 dayjs.extend(minMax);
@@ -34,7 +35,7 @@ const additionalData = (data: FacilityData) => {
     data.availability,
     (d) => d.room_type
   );
-  debugger;
+
   return {
     capacity,
     oxygen_capacity: data.oxygen_capacity ?? null,
@@ -164,12 +165,9 @@ export const processCapacityCardDataForCapacityUpdate = (
   return _.reduce(
     facilities,
     (acc, curr) => {
-      const covidData = getCapacityBedData(
-        [30, 120, 110, 100],
-        curr as FacilityData
-      );
+      const covidData = getCapacityBedData(COVID_BEDS, curr as FacilityData);
       const nonCovidData = getCapacityBedData(
-        [1, 150, 10, 20],
+        NON_COVID_BEDS,
         curr as FacilityData
       );
 

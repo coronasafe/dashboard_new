@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   AVAILABILITY_TYPES,
   AVAILABILITY_TYPES_ORDERED,
@@ -69,7 +69,13 @@ const PopUp: React.FC<PopUpProps> = ({ data }) => {
               }
               return (
                 <div key={a}>
-                  <p className="font-semibold">{AVAILABILITY_TYPES[a]}</p>
+                  <p className="font-semibold">
+                    {
+                      AVAILABILITY_TYPES[
+                        a as unknown as keyof typeof AVAILABILITY_TYPES
+                      ]
+                    }
+                  </p>
                   {data.capacity[a]?.total_capacity ? (
                     <>
                       <p>
@@ -121,10 +127,10 @@ export const Marker: React.FC<MarkerProps> = (props) => {
     >
       <div className="MapMarkerIcon" onMouseEnter={(e) => setPopUp(true)}>
         {canShowBed({
-          capacity: data.capacity[selectedBedType],
+          capacity: data.capacity?.[selectedBedType],
           filter: selectedBedType,
         }) && (
-          <div className={colorClasses(data.capacity[selectedBedType])}>
+          <div className={colorClasses(data.capacity?.[selectedBedType])}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
@@ -133,7 +139,8 @@ export const Marker: React.FC<MarkerProps> = (props) => {
               data-icon="bed"
               role="img"
               className={
-                colorClasses(data.capacity[selectedBedType]) + bedClasses(zoom)
+                colorClasses(data.capacity?.[selectedBedType]) +
+                bedClasses(zoom)
               }
               viewBox="0 0 640 512"
             >

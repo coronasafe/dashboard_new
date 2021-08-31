@@ -5,18 +5,19 @@ import Geosuggest from "react-geosuggest";
 import { Marker } from "./Marker";
 
 import {
+  ACTIVATED_DISTRICTS,
   AVAILABILITY_TYPES,
   AVAILABILITY_TYPES_ORDERED,
   GMAP_KEY,
 } from "../../lib/common";
 import { selectedButtonClasses } from "../../utils/map";
-import { capacityMockData } from "../../utils/mock/capacity";
 import { MapTheme } from "./theme";
+import { FacilityData } from "../../lib/common/processor";
 
 interface GMapProps {
-  district: any;
+  district: typeof ACTIVATED_DISTRICTS[number];
   className?: string;
-  facilities: typeof capacityMockData.todayFiltered;
+  facilities: FacilityData;
 }
 
 const GMap: React.FC<GMapProps> = ({ district, facilities, className }) => {
@@ -114,7 +115,11 @@ const GMap: React.FC<GMapProps> = ({ district, facilities, className }) => {
                   a.toString() === selectedBedType
                 )}
               >
-                {AVAILABILITY_TYPES[a]}
+                {
+                  AVAILABILITY_TYPES[
+                    a as unknown as keyof typeof AVAILABILITY_TYPES
+                  ]
+                }
               </button>
             ))}
           </div>
