@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { ArrowRight } from "react-feather";
 import { Button, Pagination } from "@windmill/react-ui";
 import { RadialCard } from "../../../components/Charts";
@@ -9,7 +8,6 @@ import {
   AVAILABILITY_TYPES,
   AVAILABILITY_TYPES_ORDERED,
   AVAILABILITY_TYPES_TOTAL_ORDERED,
-  GOVT_FACILITY_TYPES,
 } from "../../../lib/common";
 import { careSummary, CareSummaryResponse } from "../../../lib/types";
 import { parameterize, toDateString } from "../../../utils/parser";
@@ -18,30 +16,40 @@ import GMap from "../../../components/GMap/GMap";
 import { useEffect, useState } from "react";
 import { CapacityCard } from "../../../components/CapacityCard";
 import {
-  processCapacityCardDataForCapacity,
-  processFacilityData,
-  processFacilityTriviaForCapacity,
+  processCapacityCardDataForCapacityUpdate,
+  processFacilityDataUpdate,
+  FacilitiesTrivia,
+  FacilityData,
+  processFacilityTriviaForCapacityUpdate,
+  CapacityCardDataForCapacity,
 } from "../../../lib/common/processor";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { TableExportHeader } from "../../../components/TableExportHeader";
+import _ from "lodash";
 
 dayjs.extend(relativeTime);
 
 interface CapacityProps {
-  districtName: string;
   data: CareSummaryResponse;
+  filterDistrict: typeof ACTIVATED_DISTRICTS[number];
+  capacityCardData: CapacityCardDataForCapacity[];
+  facilitiesTrivia: FacilitiesTrivia;
+  filtered: FacilityData;
+  todayFiltered: FacilityData;
 }
 
-const Capacity: React.FC<CapacityProps> = ({
+const Capacity = ({
+  data,
+  filterDistrict,
   capacityCardData,
   facilitiesTrivia,
-  filterDistrict,
+  filtered,
   todayFiltered,
-}) => {
+}: CapacityProps) => {
   const [tableData, setTableData] = useState(capacityCardData);
   const [searchTerm, setSearchTerm] = useState("");
-
+  console.log(facilitiesTrivia.current, facilitiesTrivia.previous);
   const [page, setPage] = useState(0);
   const resultsPerPage = 10;
 
@@ -79,29 +87,32 @@ const Capacity: React.FC<CapacityProps> = ({
           </Pill>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 my-5">
-          {AVAILABILITY_TYPES_TOTAL_ORDERED.map((k) => (
-            <RadialCard
-              label={k.name}
-              count={facilitiesTrivia.current.count}
-              //@ts-ignore
-              current={facilitiesTrivia.current[k.id]}
-              //@ts-ignore
-              previous={facilitiesTrivia.previous[k.id]}
-              key={k.id}
-            />
-          ))}
-          {AVAILABILITY_TYPES_ORDERED.map((k) => (
-            <RadialCard
-              label={AVAILABILITY_TYPES[k]}
-              count={facilitiesTrivia.current.count}
-              //@ts-ignore
-              current={facilitiesTrivia.current[k]}
-              //@ts-ignore
-              previous={facilitiesTrivia.previous[k]}
-              key={k}
-            />
-          ))}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 my-5">
+          {AVAILABILITY_TYPES_TOTAL_ORDERED.map((k) => {
+            return (
+              <RadialCard
+                label={k.name}
+                count={facilitiesTrivia.current.count}
+                // @ts-ignore
+                current={facilitiesTrivia.current[k.id]}
+                // @ts-ignore
+                previous={facilitiesTrivia.previous[k.id]}
+                key={k.id}
+              />
+            );
+          })}
+          {AVAILABILITY_TYPES_ORDERED.map((k) => {
+            const key = k as unknown as keyof typeof AVAILABILITY_TYPES;
+            return (
+              <RadialCard
+                label={AVAILABILITY_TYPES[key]}
+                count={facilitiesTrivia.current.count}
+                current={facilitiesTrivia.current[key]}
+                previous={facilitiesTrivia.previous[key]}
+                key={k}
+              />
+            );
+          })}
         </div>
       </section>
       <section id="facility-capacity">
@@ -134,7 +145,8 @@ const Capacity: React.FC<CapacityProps> = ({
 export const getServerSideProps: GetServerSideProps = async ({
   params,
 }: GetServerSidePropsContext) => {
-  const district = ACTIVATED_DISTRICTS.find(
+  const district = _.find(
+    ACTIVATED_DISTRICTS,
     (obj) =>
       parameterize(obj.name) === parameterize(params?.districtName as string)
   );
@@ -148,40 +160,47 @@ export const getServerSideProps: GetServerSideProps = async ({
   const date = new Date();
   const data = await careSummary("facility", district.id);
 
-  const filtered = processFacilityData(data.results);
-  const facilitiesTrivia = processFacilityTriviaForCapacity(filtered);
-  const capacityCardData = processCapacityCardDataForCapacity(filtered);
-  const todayFiltered = filtered.filter((f) => f.date === toDateString(date));
+  // fs.writeFileSync("./res.json", JSON.stringify(data), "utf-8");
 
-  const exported = {
-    data: filtered.reduce((a, c) => {
-      if (c.date !== toDateString(date)) {
-        return a;
-      }
-      return [
-        ...a,
-        {
-          "Govt/Pvt": GOVT_FACILITY_TYPES.includes(c.facilityType)
-            ? "Govt"
-            : "Pvt",
-          "Hops/CFLTC":
-            c.facilityType === "First Line Treatment Centre" ? "CFLTC" : "Hops",
-          "Hospital/CFLTC Address": c.address,
-          "Hospital/CFLTC Name": c.name,
-          Mobile: c.phoneNumber,
-          ...AVAILABILITY_TYPES_ORDERED.reduce((t, x) => {
-            const y = { ...t };
-            y[`Current ${AVAILABILITY_TYPES[x]}`] =
-              c.capacity[x]?.current_capacity || 0;
-            y[`Total ${AVAILABILITY_TYPES[x]}`] =
-              c.capacity[x]?.total_capacity || 0;
-            return y;
-          }, {}),
-        },
-      ];
-    }, []),
-    filename: "capacity_export.csv",
-  };
+  const filtered = processFacilityDataUpdate(data.results);
+  const facilitiesTrivia = processFacilityTriviaForCapacityUpdate(filtered);
+  const capacityCardData = processCapacityCardDataForCapacityUpdate(filtered);
+  const todayFiltered = _.filter(
+    filtered,
+    (f) => f.date === toDateString(date)
+  );
+
+  // const exported = {
+  //   data: filtered.reduce((a, c) => {
+  //     if (c.date !== toDateString(date)) {
+  //       return a;
+  //     }
+  //     return [
+  //       ...a,
+  //       {
+  //         "Govt/Pvt": GOVT_FACILITY_TYPES.includes(c.facilityType)
+  //           ? "Govt"
+  //           : "Pvt",
+  //         "Hops/CFLTC":
+  //           c.facilityType === "First Line Treatment Centre"
+  //             ? "CFLTC"
+  //             : "Hops" || null,
+  //         "Hospital/CFLTC Address": c.address || null,
+  //         "Hospital/CFLTC Name": c.name || null,
+  //         Mobile: c.phoneNumber || null,
+  //         ...AVAILABILITY_TYPES_ORDERED.reduce((t, x) => {
+  //           const y = { ...t };
+  //           y[`Current ${AVAILABILITY_TYPES[x]}`] =
+  //             c.capacity[x]?.current_capacity || 0;
+  //           y[`Total ${AVAILABILITY_TYPES[x]}`] =
+  //             c.capacity[x]?.total_capacity || 0;
+  //           return y;
+  //         }, {}),
+  //       },
+  //     ];
+  //   }, []),
+  //   filename: "capacity_export.csv",
+  // };
 
   return {
     props: {
@@ -191,7 +210,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       facilitiesTrivia,
       filtered,
       todayFiltered,
-      exported,
+      // exported,
     },
   };
 };

@@ -1,28 +1,18 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { APIResponder } from "../../lib/api/helper";
-import { ACTIVATED_DISTRICTS, OXYGEN_INVENTORY } from "../../lib/common";
-import {
-  careSummary,
-  FacilityData,
-  FacilitySummary,
-  Inventory,
-} from "../../lib/types";
-import {
-  getCapacityBedData,
-  getFinalTotalData,
-  InventoryTimeToEmpty,
-  toDateString,
-} from "../../utils/parser";
+import { ACTIVATED_DISTRICTS, COVID_BEDS } from "../../lib/common";
+import { careSummary, FacilitySummary } from "../../lib/types";
+import { getCapacityBedData, getFinalTotalData } from "../../utils/parser";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { processFacilityData } from "../../lib/common/processor";
+import { processFacilityDataUpdate } from "../../lib/common/processor";
 
 dayjs.extend(relativeTime);
 
 const processCapacityData = (facilities: FacilitySummary[]) => {
   // @ts-ignore I've got no idea what actually happens here.
   return facilities.reduce((acc, { facility }) => {
-    const covidData = getCapacityBedData([30, 120, 110, 100], facility);
+    const covidData = getCapacityBedData(COVID_BEDS, facility);
     const nonCovidData = getCapacityBedData([1, 150, 10, 20], facility);
     const finalTotalData = getFinalTotalData(covidData, nonCovidData);
     const noCapacity = finalTotalData.every((item) => item.total === 0);
@@ -66,7 +56,7 @@ const handler = async (req: VercelRequest, res: VercelResponse) => {
   }
 
   const rawData = await careSummary("facility", Number(req.query.districtID));
-  const facilities = processFacilityData(rawData.results);
+  const facilities = processFacilityDataUpdate(rawData.results);
 
   // TODO: Need to actually figure out what's happening here.
   // const capacity = processCapacityData(rawData.results);

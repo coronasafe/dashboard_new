@@ -1,4 +1,6 @@
 // Activated Districts
+import _ from "lodash";
+
 export const ACTIVATED_DISTRICTS = [
   { id: 7, name: "Ernakulam", lat: 10.148_547_6, lng: 76.500_752_4, zoom: 10 },
 ];
@@ -21,35 +23,42 @@ export const AVAILABILITY_TYPES_TOTAL_ORDERED = [
   { id: 1111, name: "Ventilator", non_covid: 20, covid: 100 },
 ];
 
-export const AVAILABILITY_TYPES: { [key: number]: string } = {
-  20: "Non-Covid Ventilator",
-  10: "Non-Covid ICU",
-  150: "Non-Covid Oxygen Beds",
-  1: "Non-Covid Ordinary Bed",
-  70: "KASP Ventilator",
-  50: "KASP ICU",
-  60: "KASP Oxygen Beds",
-  40: "KASP Ordinary Bed",
-  100: "Covid ICU w/ Ventilator",
-  110: "Covid ICU",
-  120: "Covid Oxygen Beds",
-  30: "Covid Ordinary Bed",
+export const AVAILABILITY_TYPES = {
+  "20": "Non-Covid Ventilator",
+  "10": "Non-Covid ICU",
+  "150": "Non-Covid Oxygen Beds",
+  "1": "Non-Covid Ordinary Bed",
+  "70": "KASP Ventilator",
+  "50": "KASP ICU",
+  "60": "KASP Oxygen Beds",
+  "40": "KASP Ordinary Bed",
+  "100": "Covid ICU w/ Ventilator",
+  "110": "Covid ICU",
+  "120": "Covid Oxygen Beds",
+  "30": "Covid Ordinary Bed",
 };
 
 export const AVAILABILITY_TYPES_PROXY = {
-  20: "Non-Covid",
-  10: "Non-Covid",
-  150: "Non-Covid",
-  1: "Non-Covid",
-  70: "KASP",
-  50: "KASP",
-  60: "KASP",
-  40: "KASP",
-  100: "Covid",
-  110: "Covid",
-  120: "Covid",
-  30: "Covid",
+  "20": "Non-Covid",
+  "10": "Non-Covid",
+  "150": "Non-Covid",
+  "1": "Non-Covid",
+  "70": "KASP",
+  "50": "KASP",
+  "60": "KASP",
+  "40": "KASP",
+  "100": "Covid",
+  "110": "Covid",
+  "120": "Covid",
+  "30": "Covid",
 };
+
+export const COVID_BEDS = Object.entries(AVAILABILITY_TYPES_PROXY)
+  .filter(([key, value]) => value === "Covid")
+  .map(([key, value]) => key);
+export const NON_COVID_BEDS = Object.entries(AVAILABILITY_TYPES_PROXY)
+  .filter(([key, value]) => value === "Non-Covid")
+  .map(([key, value]) => key);
 
 export const PATIENT_TYPES = {
   home_isolation: "Home Isolation",
@@ -157,22 +166,22 @@ export const CONTENT = {
 };
 
 export const INITIAL_FACILITIES_TRIVIA = {
-  20: { total: 0, used: 0 },
-  10: { total: 0, used: 0 },
-  150: { total: 0, used: 0 },
-  1: { total: 0, used: 0 },
-  70: { total: 0, used: 0 },
-  50: { total: 0, used: 0 },
-  60: { total: 0, used: 0 },
-  40: { total: 0, used: 0 },
-  100: { total: 0, used: 0 },
-  110: { total: 0, used: 0 },
-  120: { total: 0, used: 0 },
-  30: { total: 0, used: 0 },
-  1111: { total: 0, used: 0 },
-  2222: { total: 0, used: 0 },
-  3333: { total: 0, used: 0 },
-  4444: { total: 0, used: 0 },
+  "20": { total: 0, used: 0 },
+  "10": { total: 0, used: 0 },
+  "150": { total: 0, used: 0 },
+  "1": { total: 0, used: 0 },
+  "70": { total: 0, used: 0 },
+  "50": { total: 0, used: 0 },
+  "60": { total: 0, used: 0 },
+  "40": { total: 0, used: 0 },
+  "100": { total: 0, used: 0 },
+  "110": { total: 0, used: 0 },
+  "120": { total: 0, used: 0 },
+  "30": { total: 0, used: 0 },
+  "1111": { total: 0, used: 0 },
+  "2222": { total: 0, used: 0 },
+  "3333": { total: 0, used: 0 },
+  "4444": { total: 0, used: 0 },
   actualDischargedPatients: 0,
   actualLivePatients: 0,
   count: 0,
