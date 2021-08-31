@@ -9,7 +9,12 @@ import {
   processFacilityDataUpdate,
 } from "../../../lib/common/processor";
 import { careSummary, CareSummaryResponse } from "../../../lib/types";
-import { parameterize, toDateString } from "../../../utils/parser";
+import {
+  getNDateAfter,
+  getNDateBefore,
+  parameterize,
+  toDateString,
+} from "../../../utils/parser";
 
 interface MapProps {
   data: CareSummaryResponse;
@@ -48,13 +53,23 @@ export const getServerSideProps: GetServerSideProps = async ({
       notFound: true,
     };
   }
+  const today = new Date();
+  const start_date = toDateString(getNDateBefore(today, 1));
+  const end_date = toDateString(getNDateAfter(today, 1));
+  const limit = 2000;
 
-  const date = new Date();
-  const data = await careSummary("facility", district.id);
+  console.log({ start_date, end_date });
+  const data = await careSummary(
+    "facility",
+    district.id,
+    limit,
+    start_date,
+    end_date
+  );
   const filtered = processFacilityDataUpdate(data.results);
   const todayFiltered = _.filter(
     filtered,
-    (f) => f.date === toDateString(date)
+    (f) => f.date === toDateString(today)
   );
 
   return {
