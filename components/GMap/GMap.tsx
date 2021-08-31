@@ -12,12 +12,12 @@ import {
 } from "../../lib/common";
 import { selectedButtonClasses } from "../../utils/map";
 import { MapTheme } from "./theme";
-import { FacilityData } from "../../lib/common/processor";
+import { ProcessFacilityDataReturnType } from "../../lib/common/processor";
 
 interface GMapProps {
   district: typeof ACTIVATED_DISTRICTS[number];
   className?: string;
-  facilities: FacilityData;
+  facilities: ProcessFacilityDataReturnType;
 }
 
 const GMap: React.FC<GMapProps> = ({ district, facilities, className }) => {

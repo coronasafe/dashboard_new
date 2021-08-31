@@ -1,5 +1,6 @@
 import axios from "axios";
 import useSWR from "swr";
+import Loader from "../../lib/assets/icons/LoaderIcon";
 import { PATIENT_TYPES } from "../../lib/common";
 import { PatientSummary } from "../../lib/types";
 import { District } from "../../lib/types/common";
@@ -15,6 +16,8 @@ const PatientSummaryPage: React.FC<PatientSummaryProps> = ({ district }) => {
       .get("/api/patient/summary", { params: { districtId: district.id } })
       .then((res) => res.data?.data)
   );
+
+  if (!data) return <Loader />;
 
   return (
     <div className="grid grid-col-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8 ">
