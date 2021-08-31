@@ -37,6 +37,7 @@ const additionalData = (data: FacilityData) => {
   );
 
   return {
+    ...data,
     capacity,
     oxygen_capacity: data.oxygen_capacity ?? null,
     type_b_cylinders: data.type_b_cylinders ?? null,
@@ -85,6 +86,20 @@ export const processFacilityDataUpdate = (facilities: FacilitySummary[]) => {
           )?.toDate()
         ) || null;
 
+      const {
+        id,
+        name,
+        address,
+        district_id,
+        facility_type,
+        location,
+        phone_number,
+        inventory,
+        modified_date: _temp,
+        date,
+        ...extraData
+      } = additionalData(data);
+
       return {
         date: toDateString(new Date(created_date)),
         id: facility.id || null,
@@ -97,7 +112,7 @@ export const processFacilityDataUpdate = (facilities: FacilitySummary[]) => {
         inventory: data.inventory || null,
         modified_date: modified_date_format,
         inventory_modified_date,
-        ...additionalData(data),
+        ...extraData,
       };
     }
   );
