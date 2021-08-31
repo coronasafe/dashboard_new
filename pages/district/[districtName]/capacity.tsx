@@ -10,7 +10,12 @@ import {
   AVAILABILITY_TYPES_TOTAL_ORDERED,
 } from "../../../lib/common";
 import { careSummary, CareSummaryResponse } from "../../../lib/types";
-import { parameterize, toDateString } from "../../../utils/parser";
+import {
+  getNDateAfter,
+  getNDateBefore,
+  parameterize,
+  toDateString,
+} from "../../../utils/parser";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import GMap from "../../../components/GMap/GMap";
 import { useEffect, useState } from "react";
@@ -19,7 +24,7 @@ import {
   processCapacityCardDataForCapacityUpdate,
   processFacilityDataUpdate,
   FacilitiesTrivia,
-  FacilityData,
+  ProcessFacilityDataReturnType,
   processFacilityTriviaForCapacityUpdate,
   CapacityCardDataForCapacity,
 } from "../../../lib/common/processor";
@@ -35,8 +40,8 @@ interface CapacityProps {
   filterDistrict: typeof ACTIVATED_DISTRICTS[number];
   capacityCardData: CapacityCardDataForCapacity[];
   facilitiesTrivia: FacilitiesTrivia;
-  filtered: FacilityData;
-  todayFiltered: FacilityData;
+  filtered: ProcessFacilityDataReturnType;
+  todayFiltered: ProcessFacilityDataReturnType;
 }
 
 const Capacity = ({
@@ -109,6 +114,7 @@ const Capacity = ({
                 count={facilitiesTrivia.current.count}
                 current={facilitiesTrivia.current[key]}
                 previous={facilitiesTrivia.previous[key]}
+                reverseIndicator
                 key={k}
               />
             );
@@ -157,18 +163,24 @@ export const getServerSideProps: GetServerSideProps = async ({
     };
   }
 
-  const date = new Date();
-  const data = await careSummary("facility", district.id);
+  const today = new Date();
+  const start_date = toDateString(getNDateBefore(today, 1));
+  const end_date = toDateString(getNDateAfter(today, 1));
+  const limit = 2000;
 
-  // fs.writeFileSync("./res.json", JSON.stringify(data), "utf-8");
+  console.log({ start_date, end_date });
+  const data = await careSummary(
+    "facility",
+    district.id,
+    limit,
+    start_date,
+    end_date
+  );
 
   const filtered = processFacilityDataUpdate(data.results);
   const facilitiesTrivia = processFacilityTriviaForCapacityUpdate(filtered);
   const capacityCardData = processCapacityCardDataForCapacityUpdate(filtered);
-  const todayFiltered = _.filter(
-    filtered,
-    (f) => f.date === toDateString(date)
-  );
+  const todayFiltered = _.filter(filtered, (f) => f.date === start_date);
 
   // const exported = {
   //   data: filtered.reduce((a, c) => {
