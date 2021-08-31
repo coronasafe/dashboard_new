@@ -14,6 +14,7 @@ interface RadialCardProps {
   current: usedTotal;
   previous: usedTotal;
   className?: string;
+  reverseIndicator?: boolean;
 }
 
 export const RadialCard: React.FC<RadialCardProps> = ({
@@ -22,6 +23,7 @@ export const RadialCard: React.FC<RadialCardProps> = ({
   current,
   previous,
   className,
+  reverseIndicator,
 }) => {
   const current_used = Math.round((current.used / current.total) * 100);
   const previous_used = Math.round((previous.used / previous.total) * 100);
@@ -31,6 +33,7 @@ export const RadialCard: React.FC<RadialCardProps> = ({
 
   const isPositive = (value: number) =>
     !Number.isNaN(value) && value !== 0 && value > 0;
+
   const { used, total, progress, innerProgress } = useSpring({
     from: { used: 0, total: 0, progress: "0, 100", innerProgress: 0 },
     to: {
@@ -75,21 +78,29 @@ export const RadialCard: React.FC<RadialCardProps> = ({
                 {innerProgress.to((x: number) => `${Math.round(x)}%`)}
               </animated.span>
             </div>
-            <div className="mt-2 text-center">
-              <span
-                className={clsx("text-xl font-medium", {
-                  "text-green-600 dark:text-green-400": isPositive(diff),
-                  "text-red-600 dark:text-red-500": !isPositive(diff),
-                })}
-              >
-                {isPositive(diff) ? (
-                  <ArrowUp className="inline h-full" />
-                ) : (
-                  <ArrowDown className="inline h-full" />
-                )}
-                {Math.abs(diff)}%
-              </span>
-            </div>
+            {
+              <div className="mt-2 text-center">
+                <span
+                  className={clsx("text-xl font-medium", {
+                    "text-green-600 dark:text-green-400": reverseIndicator
+                      ? !isPositive(diff)
+                      : isPositive(diff),
+                    "text-red-600 dark:text-red-500": reverseIndicator
+                      ? isPositive(diff)
+                      : !isPositive(diff),
+                  })}
+                >
+                  {diff ? (
+                    isPositive(diff) ? (
+                      <ArrowUp className="inline h-full" />
+                    ) : (
+                      <ArrowDown className="inline h-full" />
+                    )
+                  ) : null}
+                  {Math.abs(diff)}%
+                </span>
+              </div>
+            }
           </div>
         </div>
       </div>
