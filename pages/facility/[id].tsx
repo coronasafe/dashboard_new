@@ -59,28 +59,32 @@ const FacilityDetails = () => {
         <h1 className="dark:text-gray-100 text-3xl mb-4 mt-12"> Capacity </h1>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 my-5">
-          {AVAILABILITY_TYPES_TOTAL_ORDERED.map((k) => (
-            <RadialCard
-              label={k.name}
-              count={facilitiesTrivia.current.count}
-              //@ts-ignore
-              current={facilitiesTrivia.current[k.id]}
-              //@ts-ignore
-              previous={facilitiesTrivia.previous[k.id]}
-              key={k.id}
-            />
-          ))}
-          {AVAILABILITY_TYPES_ORDERED.map((k) => (
-            <RadialCard
-              label={AVAILABILITY_TYPES[k]}
-              count={facilitiesTrivia.current.count}
-              //@ts-ignore
-              current={facilitiesTrivia.current[k]}
-              //@ts-ignore
-              previous={facilitiesTrivia.previous[k]}
-              key={k}
-            />
-          ))}
+          {AVAILABILITY_TYPES_TOTAL_ORDERED.map((k) => {
+            return (
+              <RadialCard
+                label={k.name}
+                count={facilitiesTrivia.current.count}
+                // @ts-ignore
+                current={facilitiesTrivia.current[k.id]}
+                // @ts-ignore
+                previous={facilitiesTrivia.previous[k.id]}
+                key={k.id}
+              />
+            );
+          })}
+          {AVAILABILITY_TYPES_ORDERED.map((k) => {
+            const key = k as unknown as keyof typeof AVAILABILITY_TYPES;
+            return (
+              <RadialCard
+                label={AVAILABILITY_TYPES[key]}
+                count={facilitiesTrivia.current.count}
+                current={facilitiesTrivia.current[key]}
+                previous={facilitiesTrivia.previous[key]}
+                reverseIndicator
+                key={k}
+              />
+            );
+          })}
         </div>
       </section>
       <section id="oxygen" className="py-4 my-4">
@@ -100,7 +104,7 @@ const FacilityDetails = () => {
       <section id="capacity-map" className="py-4 my-4">
         <h1 className="dark:text-gray-100 text-3xl mb-4"> Map </h1>
 
-        <GMap district={filterDistrict} facilities={todayFiltered} />
+        {/* <GMap district={filterDistrict} facilities={todayFiltered} /> */}
       </section>
     </div>
   );
