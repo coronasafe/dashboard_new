@@ -2,6 +2,18 @@ import dayjs from "dayjs";
 import { ACTIVATED_DISTRICTS } from "../lib/common";
 import { FacilityData, Inventory } from "../lib/types";
 
+export const getNDateBefore = (d: string | number | Date, n: number) => {
+  const dt = new Date(d);
+  dt.setDate(dt.getDate() - n);
+  return dt;
+};
+
+export const getNDateAfter = (d: string | number | Date, n: number) => {
+  const dt = new Date(d);
+  dt.setDate(dt.getDate() + n);
+  return dt;
+};
+
 export const parameterize = (word: string | undefined) => {
   if (!word) return "";
   return word.toLowerCase().replace(/ /g, "_");
