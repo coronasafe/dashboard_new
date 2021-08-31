@@ -19,8 +19,8 @@ export interface FacilityData {
   location: Location;
   local_body: number;
   ward_object: WardObject;
-  capacity?: Capacity[];
-  inventory?: Inventory[];
+  capacity?: { [key: string]: Capacity };
+  inventory?: [Inventory, Inventory, Inventory, Inventory];
   availability?: Availability[];
   created_date: string;
   phone_number: string;
