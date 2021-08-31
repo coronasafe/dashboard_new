@@ -1,17 +1,26 @@
+import _ from "lodash";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import ContentNav from "../../../components/ContentNav";
 import GMap from "../../../components/GMap/GMap";
 import { ACTIVATED_DISTRICTS } from "../../../lib/common";
+import {
+  ProcessFacilityDataReturnType,
+  processFacilityDataUpdate,
+} from "../../../lib/common/processor";
 import { careSummary, CareSummaryResponse } from "../../../lib/types";
-import { capacityMockData } from "../../../utils/mock/capacity";
-import { getDistrictName, parameterize } from "../../../utils/parser";
-import Capacity from "./capacity";
+import { parameterize, toDateString } from "../../../utils/parser";
 
-const Map = () => {
+interface MapProps {
+  data: CareSummaryResponse;
+  filterDistrict: typeof ACTIVATED_DISTRICTS[number];
+  filtered: ProcessFacilityDataReturnType;
+  todayFiltered: ProcessFacilityDataReturnType;
+}
+
+const Map = ({ filterDistrict, todayFiltered }: MapProps) => {
   const router = useRouter();
 
-  const { todayFiltered, filterDistrict } = capacityMockData;
   return (
     <div className="container mx-auto px-4 my-4">
       <ContentNav />
@@ -25,27 +34,35 @@ const Map = () => {
 };
 
 export default Map;
-
 export const getServerSideProps: GetServerSideProps = async ({
   params,
 }: GetServerSidePropsContext) => {
-  const district = ACTIVATED_DISTRICTS.find(
+  const district = _.find(
+    ACTIVATED_DISTRICTS,
     (obj) =>
       parameterize(obj.name) === parameterize(params?.districtName as string)
   );
 
-  if (district) {
-    const data = await careSummary("facility", district.id);
-
+  if (!district) {
     return {
-      props: {
-        data,
-        districtName: parameterize(district.name),
-      },
+      notFound: true,
     };
   }
 
+  const date = new Date();
+  const data = await careSummary("facility", district.id);
+  const filtered = processFacilityDataUpdate(data.results);
+  const todayFiltered = _.filter(
+    filtered,
+    (f) => f.date === toDateString(date)
+  );
+
   return {
-    notFound: true,
+    props: {
+      data,
+      filterDistrict: district,
+      filtered,
+      todayFiltered,
+    },
   };
 };
