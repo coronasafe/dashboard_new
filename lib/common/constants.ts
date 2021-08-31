@@ -187,3 +187,19 @@ export const INITIAL_FACILITIES_TRIVIA = {
   count: 0,
   oxygen: 0,
 };
+
+export const INITIAL_PATIENT_FACILITY_TRIVIA = {
+  count: 0,
+  icu: { total: 0, today: 0 },
+  oxygen_bed: { total: 0, today: 0 },
+  bed_with_oxygen_support: { total: 0, today: 0 },
+  icu_with_oxygen_support: { total: 0, today: 0 },
+  not_admitted: { total: 0, today: 0 },
+  home_isolation: { total: 0, today: 0 },
+  isolation_room: { total: 0, today: 0 },
+  home_quarantine: { total: 0, today: 0 },
+  paediatric_ward: { total: 0, today: 0 },
+  gynaecology_ward: { total: 0, today: 0 },
+  icu_with_invasive_ventilator: { total: 0, today: 0 },
+  icu_with_non_invasive_ventilator: { total: 0, today: 0 },
+};
