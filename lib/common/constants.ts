@@ -203,3 +203,12 @@ export const INITIAL_PATIENT_FACILITY_TRIVIA = {
   icu_with_invasive_ventilator: { total: 0, today: 0 },
   icu_with_non_invasive_ventilator: { total: 0, today: 0 },
 };
+
+export const INITIAL_TEST_FACILITIES_TRIVIA = {
+  count: 0,
+  result_awaited: 0,
+  test_discarded: 0,
+  total_patients: 0,
+  result_negative: 0,
+  result_positive: 0,
+};
