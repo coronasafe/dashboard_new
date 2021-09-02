@@ -212,3 +212,14 @@ export const INITIAL_TEST_FACILITIES_TRIVIA = {
   result_negative: 0,
   result_positive: 0,
 };
+export const INITIAL_TRIAGE_FACILITIES_TRIVIA = {
+  count: 0,
+  avg_patients_visited: 0,
+  avg_patients_referred: 0,
+  avg_patients_isolation: 0,
+  avg_patients_home_quarantine: 0,
+  total_patients_visited: 0,
+  total_patients_referred: 0,
+  total_patients_isolation: 0,
+  total_patients_home_quarantine: 0,
+};
