@@ -40,6 +40,7 @@ export interface FacilityData {
   expected_oxygen_requirement: number;
   actual_discharged_patients: number;
   actual_live_patients: number;
+  // patient
   today_patients_not_admitted: number;
   total_patients_not_admitted: number;
   today_patients_home_isolation: number;
@@ -62,7 +63,23 @@ export interface FacilityData {
   total_patients_icu_with_invasive_ventilator: number;
   today_patients_icu_with_non_invasive_ventilator: number;
   total_patients_icu_with_non_invasive_ventilator: number;
+  // test
+  result_awaited: number;
+  result_negative: number;
+  result_positive: number;
+  test_discarded: number;
+  total_patients: number;
+  total_tests: number;
   [key: string]: any;
+  // triage
+  avg_patients_visited: number;
+  avg_patients_referred: number;
+  avg_patients_isolation: number;
+  avg_patients_home_quarantine: number;
+  total_patients_visited: number;
+  total_patients_referred: number;
+  total_patients_isolation: number;
+  // total_patients_home_quarantine: number
 }
 
 export interface SummaryCount {

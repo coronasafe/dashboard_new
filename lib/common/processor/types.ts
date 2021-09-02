@@ -4,6 +4,8 @@ import {
 } from ".";
 import { PATIENT_TYPES } from "..";
 import { CapacityBedData } from "../../../utils/parser";
+import { processTestFacilitiesTriviaData } from "./testsProcessor";
+import { processTriageFacilitiesTriviaData } from "./triageProcessor";
 
 export interface CapacityCardDataForCapacity {
   facility_name: string | null;
@@ -53,3 +55,7 @@ export type capacityCardData = CapacityCardDataForCapacity;
 export type PatientTypeKeys = keyof typeof PATIENT_TYPES;
 export type PatientTypeTodayKeys = `today_patients_${PatientTypeKeys}`;
 export type PatientTypeTotalKeys = `total_patients_${PatientTypeKeys}`;
+
+export type TestFacilitiesTrivia = ReturnType<
+  typeof processTestFacilitiesTriviaData
+>;
