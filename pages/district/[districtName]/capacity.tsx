@@ -92,11 +92,12 @@ const Capacity = ({
           </Pill>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 my-5">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 my-5">
           {AVAILABILITY_TYPES_TOTAL_ORDERED.map((k) => {
             return (
               <RadialCard
                 label={k.name}
+                reverseIndicator
                 count={facilitiesTrivia.current.count}
                 // @ts-ignore
                 current={facilitiesTrivia.current[k.id]}
