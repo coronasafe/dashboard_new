@@ -59,3 +59,6 @@ export type PatientTypeTotalKeys = `total_patients_${PatientTypeKeys}`;
 export type TestFacilitiesTrivia = ReturnType<
   typeof processTestFacilitiesTriviaData
 >;
+export type TriageFacilitiesTrivia = ReturnType<
+  typeof processTriageFacilitiesTriviaData
+>;
