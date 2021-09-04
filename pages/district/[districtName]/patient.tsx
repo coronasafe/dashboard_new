@@ -56,7 +56,7 @@ const Patient = ({ data }: { data: CareSummaryResponse }) => {
       filteredData.slice(page * resultsPerPage, (page + 1) * resultsPerPage)
     );
   }, [filteredData, page]);
-  console.log({ tableData });
+
   return (
     <div className="container mx-auto px-4">
       <ContentNav />
@@ -78,7 +78,7 @@ const Patient = ({ data }: { data: CareSummaryResponse }) => {
         <TableExportHeader
           label="Facilities"
           searchValue=""
-          setSearchValue={() => {}}
+          setSearchValue={() => { }}
         />
         {tableData.map((data, i) => (
           <BedsSummery key={i} data={data} />
@@ -118,7 +118,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   const end_date = toDateString(getNDateAfter(today, 1));
   const limit = 2000;
 
-  console.log({ start_date, end_date });
   const data = await careSummary(
     "patient",
     district.id,

@@ -99,7 +99,6 @@ const Tests = ({ facilityTrivia, tableData: initialTableData }: TestsProps) => {
   const resultsPerPage = 10;
 
   useEffect(() => {
-    console.log(":UPATE");
     setTableData(
       initialTableData.slice(page * resultsPerPage, (page + 1) * resultsPerPage)
     );
@@ -141,7 +140,7 @@ const Tests = ({ facilityTrivia, tableData: initialTableData }: TestsProps) => {
         <TableExportHeader
           label="Facilities"
           searchValue={""}
-          setSearchValue={() => {}}
+          setSearchValue={() => { }}
           className="mb-2"
         />
         <GenericTable columns={columns} data={tableRows} />

@@ -207,7 +207,11 @@ const careSummary: CareSummary = async (
       },
     })
     .then((response) => response.data)
-    .catch(console.log);
+    .catch((_) =>
+      console.log(
+        "Something unknown happened when trying to make a network request"
+      )
+    );
 };
 
 const individualCareSummary: IndividualCareSummary = async (
@@ -228,7 +232,11 @@ const individualCareSummary: IndividualCareSummary = async (
       },
     })
     .then((response) => response.data)
-    .catch(console.log);
+    .catch((_) =>
+      console.log(
+        "Something unknown happened when trying to make a network request"
+      )
+    );
 };
 
 export { careSummary, individualCareSummary };

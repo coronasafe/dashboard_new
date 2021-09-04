@@ -54,7 +54,6 @@ const Capacity = ({
 }: CapacityProps) => {
   const [tableData, setTableData] = useState(capacityCardData);
   const [searchTerm, setSearchTerm] = useState("");
-  console.log(facilitiesTrivia.current, facilitiesTrivia.previous);
   const [page, setPage] = useState(0);
   const resultsPerPage = 10;
 
@@ -169,7 +168,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   const end_date = toDateString(getNDateAfter(today, 1));
   const limit = 2000;
 
-  console.log({ start_date, end_date });
   const data = await careSummary(
     "facility",
     district.id,
