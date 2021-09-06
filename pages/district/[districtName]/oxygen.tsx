@@ -1,3 +1,4 @@
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { Activity, AlertTriangle, Clock, Database } from "react-feather";
 import ContentNav from "../../../components/ContentNav";
@@ -52,7 +53,7 @@ const Oxygen = () => {
         <TableExportHeader
           label="Facilities"
           searchValue={""}
-          setSearchValue={() => {}}
+          setSearchValue={() => { }}
           className="mb-2"
         />
       </div>
@@ -62,5 +63,13 @@ const Oxygen = () => {
     </div>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return {
+    props: {
+
+    }
+  }
+}
 
 export default Oxygen;
