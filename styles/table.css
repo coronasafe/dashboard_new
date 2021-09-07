@@ -8,7 +8,9 @@
   width: 100%;
   overflow: auto;
 }
-
+.rc-table-cell {
+  position: relative;
+}
 .rc-table-rtl.rc-table th,
 .rc-table-rtl.rc-table td {
   border-right: 0;
@@ -47,4 +49,24 @@
 .rc-table-sticky-holder {
   position: sticky;
   z-index: 2;
+}
+
+.pulse::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "";
+  opacity: 0.8;
+  animation: pulsing 0.2s infinite alternate-reverse !important;
+}
+
+@keyframes pulsing {
+  from {
+    @apply bg-red-500;
+  }
+  to {
+    background-color: none;
+  }
 }
