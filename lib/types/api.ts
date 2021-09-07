@@ -190,7 +190,7 @@ interface IndividualCareSummary {
 const careSummary: CareSummary = async (
   type,
   district,
-  limit = 5000,
+  limit = 2000,
   start_date?,
   end_date?
 ) => {
