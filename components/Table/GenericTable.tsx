@@ -14,11 +14,7 @@ interface GenericTableProps {
 export const GenericTable: React.FC<GenericTableProps> = ({
   data,
   columns,
-
-  scroll = {
-    x: 1500,
-    y: process.browser ? window?.innerHeight : undefined,
-  },
+  scroll,
 }) => {
   return <Table data={data} columns={columns} scroll={scroll} sticky={true} />;
 };
