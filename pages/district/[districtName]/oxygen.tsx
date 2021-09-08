@@ -1,8 +1,6 @@
 import { Pagination } from "@windmill/react-ui";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { Activity, AlertTriangle, Clock, Database } from "react-feather";
 import ContentNav from "../../../components/ContentNav";
 import { OxygenFacilityCard } from "../../../components/OxygenFacilityCard";
 import { OxygenSummery } from "../../../components/OxygenSummery";
@@ -16,39 +14,11 @@ import {
 } from "../../../lib/common/processor/oxygenDataProcessor";
 import { careSummary, Inventory } from "../../../lib/types";
 import {
-  getDistrictName,
   getNDateAfter,
   getNDateBefore,
   parameterize,
   toDateString,
 } from "../../../utils/parser";
-
-const tempData = [
-  {
-    icon: <Database className="text-blue-500 mr-4" size="40px" />,
-    label: "Liquid Oxygen",
-    value: 51418.36,
-    unit: "Cubic Meter",
-  },
-  {
-    icon: <Activity className="text-yellow-400 mr-4" size="40px" />,
-    label: "Burn Rate",
-    value: 1061.34,
-    unit: "Cubic Meter / hour",
-  },
-  {
-    icon: <Clock className="text-green-500 mr-4" size="40px" />,
-    label: "Time to Empty",
-    value: 48.45,
-    unit: "Hours",
-  },
-  {
-    icon: <AlertTriangle className="text-red-500 mr-4" size="40px" />,
-    label: "High Alerts",
-    value: 1,
-    unit: "Facilities",
-  },
-];
 
 interface OxygenProps {
   oxygenCardData: OxygenCardData[];
@@ -56,13 +26,9 @@ interface OxygenProps {
 }
 
 const Oxygen = ({ oxygenCardData, oxygenFlatData }: OxygenProps) => {
-  const router = useRouter();
-
-  const districtName = getDistrictName(router.query.districtName?.toString());
-
   const [tableData, setTableData] = useState<OxygenCardData[]>([]);
-
   const [page, setPage] = useState(0);
+
   const resultsPerPage = 10;
 
   useEffect(() => {
