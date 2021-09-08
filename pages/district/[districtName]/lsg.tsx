@@ -1,4 +1,6 @@
-import { Button, Input } from "@windmill/react-ui";
+import _ from "lodash";
+import dayjs from "dayjs";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import React from "react";
 import ContentNav from "../../../components/ContentNav";
@@ -6,9 +8,26 @@ import { InfoCard } from "../../../components/InfoCard";
 import { ValuePill } from "../../../components/Pill";
 import { GenericTable } from "../../../components/Table";
 import { TableExportHeader } from "../../../components/TableExportHeader";
-import { PATIENT_TYPES, TESTS_TYPES } from "../../../lib/common";
+import { ACTIVATED_DISTRICTS, PATIENT_TYPES, TESTS_TYPES } from "../../../lib/common";
 import { columns, data } from "../../../utils/mock/GenericTableData";
-import { getDistrictName } from "../../../utils/parser";
+import { getDistrictName, getNDateAfter, getNDateBefore, parameterize, toDateString } from "../../../utils/parser";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { careSummary } from "../../../lib/types";
+
+const INITIAL_LSG_TRIVIA = {
+  count: 0,
+  icu: { total: 0, today: 0 },
+  oxygen_bed: { total: 0, today: 0 },
+  not_admitted: { total: 0, today: 0 },
+  home_isolation: { total: 0, today: 0 },
+  isolation_room: { total: 0, today: 0 },
+  home_quarantine: { total: 0, today: 0 },
+  paediatric_ward: { total: 0, today: 0 },
+  gynaecology_ward: { total: 0, today: 0 },
+  icu_with_invasive_ventilator: { total: 0, today: 0 },
+  icu_with_non_invasive_ventilator: { total: 0, today: 0 },
+};
 
 const LSG = () => {
   const router = useRouter();
@@ -44,7 +63,7 @@ const LSG = () => {
         <TableExportHeader
           label="LSG"
           searchValue={""}
-          setSearchValue={() => {}}
+          setSearchValue={() => { }}
           className="mb-2"
         />
         <GenericTable columns={columns} data={data} />
@@ -52,5 +71,38 @@ const LSG = () => {
     </div>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const district = _.find(
+    ACTIVATED_DISTRICTS,
+    (obj) =>
+      parameterize(obj.name) === parameterize(context.params?.districtName as string)
+  );
+
+  if (!district) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const today = new Date();
+  const start_date = toDateString(getNDateBefore(today, 1));
+  const end_date = toDateString(getNDateAfter(today, 1));
+  const limit = 5000;
+
+  const response = await careSummary(
+    "patient",
+    context.params?.districtID as string,
+    limit,
+    start_date,
+    end_date
+  );
+
+  return {
+    props: {
+
+    }
+  }
+}
 
 export default LSG;
