@@ -98,6 +98,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     end_date
   );
 
+  const filtered = response.results.flatMap((summary) => {
+    return {
+      ...summary,
+      created_date: toDateString(new Date(summary.created_date)),
+      total: _.keys(PATIENT_TYPES).map(type => summary.data[`total_patients_${type}`] || 0).reduce((a: number, b: number) => a + b, 0) as number,
+      today: _.keys(PATIENT_TYPES).map(type => summary.data[`today_patients_${type}`] || 0).reduce((a: number, b: number) => a + b, 0) as number,
+    };
+  });
+
   return {
     props: {
 
