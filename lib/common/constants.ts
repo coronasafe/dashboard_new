@@ -134,11 +134,18 @@ export const OXYGEN_INVENTORY = {
   type_b: 5,
 };
 
-// Reverse Dict for OXYGEN_INVENTORY
-export const OXYGEN_TYPES_KEYS = Object.entries(OXYGEN_INVENTORY).reduce(
-  (acc, [key, value]) => acc && { ...acc, [value]: key },
-  {}
-);
+export enum OXYGEN_INVENTORY_ENUM {
+  oxygen_capacity = 2,
+  type_d_cylinders = 4,
+  type_c_cylinders = 6,
+  type_b_cylinders = 5,
+}
+export const OXYGEN_INVENTORY_MAP = {
+  oxygen_capacity: 2,
+  type_d_cylinders: 4,
+  type_c_cylinders: 6,
+  type_b_cylinders: 5,
+};
 
 // Name from care DB, used to compute district summary
 export const OXYGEN_INVENTORY_NAME = {
@@ -148,11 +155,11 @@ export const OXYGEN_INVENTORY_NAME = {
   type_b: "B Type Oxygen Cylinder",
 };
 
-export const OXYGEN_CAPACITY_TRANSLATION = {
-  liquid: "oxygenCapacity",
-  type_d: "type_d_cylinders",
-  type_c: "type_c_cylinders",
-  type_b: "type_b_cylinders",
+export const OXYGEN_INVENTORY_STRING_ENUM = {
+  oxygen_capacity: "oxygen_capacity",
+  type_d_cylinders: "type_d_cylinders",
+  type_c_cylinders: "type_c_cylinders",
+  type_b_cylinders: "type_b_cylinders",
 };
 
 export const CONTENT = {
@@ -222,4 +229,18 @@ export const INITIAL_TRIAGE_FACILITIES_TRIVIA = {
   total_patients_referred: 0,
   total_patients_isolation: 0,
   total_patients_home_quarantine: 0,
+};
+
+export const INITIAL_LSG_TRIVIA = {
+  count: 0,
+  icu: { total: 0, today: 0 },
+  oxygen_bed: { total: 0, today: 0 },
+  not_admitted: { total: 0, today: 0 },
+  home_isolation: { total: 0, today: 0 },
+  isolation_room: { total: 0, today: 0 },
+  home_quarantine: { total: 0, today: 0 },
+  paediatric_ward: { total: 0, today: 0 },
+  gynaecology_ward: { total: 0, today: 0 },
+  icu_with_invasive_ventilator: { total: 0, today: 0 },
+  icu_with_non_invasive_ventilator: { total: 0, today: 0 },
 };
