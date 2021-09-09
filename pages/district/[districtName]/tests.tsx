@@ -5,7 +5,6 @@ import { ValuePill } from "../../../components/Pill";
 import { GenericTable } from "../../../components/Table";
 import { TableExportHeader } from "../../../components/TableExportHeader";
 import { ACTIVATED_DISTRICTS, TESTS_TYPES } from "../../../lib/common";
-import { data } from "../../../utils/mock/GenericTableData";
 import { ColumnType, DefaultRecordType } from "rc-table/lib/interface";
 import { GetServerSideProps } from "next";
 import {
@@ -29,6 +28,9 @@ import {
   TestTableData,
 } from "../../../lib/common/processor/testsProcessor";
 import { Pagination } from "@windmill/react-ui";
+import axios from "axios";
+import useSWR from "swr";
+import Loader from "../../../lib/assets/icons/LoaderIcon";
 
 dayjs.extend(relativeTime);
 dayjs.extend(customParseFormat);
@@ -88,26 +90,41 @@ const columns: ColumnType<DefaultRecordType>[] = [
 interface TestsProps {
   facilityTrivia: TestFacilitiesTrivia;
   tableData: TestTableData[];
+  districtId: number | string;
 }
 
-const Tests = ({ facilityTrivia, tableData: initialTableData }: TestsProps) => {
-  const [tableData, setTableData] = useState<TestTableData[]>([]);
+const Tests = ({
+  facilityTrivia: initialFacilityTrivia,
+  tableData: initialTableData,
+  districtId,
+}: TestsProps) => {
+  const { data } = useSWR<TestsProps>("/api/patient/summary", () =>
+    axios
+      .get("/api/tests", { params: { districtId: districtId } })
+      .then((res) => res.data?.data)
+  );
 
-  const tableRows = getTestTableRow(tableData);
+  const facilityTrivia = data?.facilityTrivia || initialFacilityTrivia;
+
+  const [tableData, setTableData] = useState<TestTableData[]>(
+    data?.tableData || initialTableData || []
+  );
+
+  const [results, setResults] = useState<TestTableData[]>([]);
+  const tableRows = getTestTableRow(results);
 
   const [page, setPage] = useState(0);
   const resultsPerPage = 10;
 
   useEffect(() => {
-    setTableData(
-      initialTableData.slice(page * resultsPerPage, (page + 1) * resultsPerPage)
+    setResults(
+      tableData.slice(page * resultsPerPage, (page + 1) * resultsPerPage)
     );
-  }, [initialTableData, page]);
+  }, [page]);
 
   return (
     <div className="container mx-auto px-4">
       <ContentNav />
-
       <div className="grid gap-1 grid-rows-none mb-8 sm:grid-flow-col-dense sm:grid-rows-1 sm:place-content-end">
         <ValuePill
           title="Facility Count"
@@ -140,15 +157,15 @@ const Tests = ({ facilityTrivia, tableData: initialTableData }: TestsProps) => {
         <TableExportHeader
           label="Facilities"
           searchValue={""}
-          setSearchValue={() => { }}
+          setSearchValue={() => {}}
           className="mb-2"
         />
         <GenericTable columns={columns} data={tableRows} />
         <div className="mt-4">
           <Pagination
             resultsPerPage={10}
-            totalResults={initialTableData.length}
-            label=""
+            totalResults={tableData.length}
+            label="Test Summary"
             onChange={(page) => setPage(page)}
           />
         </div>
@@ -191,6 +208,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     props: {
       facilityTrivia,
       tableData,
+      districtId: district.id,
     },
   };
 };
