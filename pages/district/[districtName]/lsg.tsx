@@ -1,7 +1,5 @@
 import _ from "lodash";
-import dayjs from "dayjs";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
 import React from "react";
 import ContentNav from "../../../components/ContentNav";
 import { InfoCard } from "../../../components/InfoCard";
@@ -10,9 +8,7 @@ import { GenericTable } from "../../../components/Table";
 import { TableExportHeader } from "../../../components/TableExportHeader";
 import { ACTIVATED_DISTRICTS, PATIENT_TYPES, TESTS_TYPES } from "../../../lib/common";
 import { columns, data } from "../../../utils/mock/GenericTableData";
-import { getDistrictName, getNDateAfter, getNDateBefore, parameterize, toDateString } from "../../../utils/parser";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-import relativeTime from "dayjs/plugin/relativeTime";
+import { getNDateAfter, getNDateBefore, parameterize, toDateString } from "../../../utils/parser";
 import { careSummary } from "../../../lib/types";
 
 const INITIAL_LSG_TRIVIA = {
@@ -25,39 +21,44 @@ const INITIAL_LSG_TRIVIA = {
   home_quarantine: { total: 0, today: 0 },
   paediatric_ward: { total: 0, today: 0 },
   gynaecology_ward: { total: 0, today: 0 },
+  bed_with_oxygen_support: { total: 0, today: 0 },
+  icu_with_oxygen_support: { total: 0, today: 0 },
   icu_with_invasive_ventilator: { total: 0, today: 0 },
   icu_with_non_invasive_ventilator: { total: 0, today: 0 },
 };
 
-const LSG = () => {
-  const router = useRouter();
+interface LSGTrivia {
+  current: typeof INITIAL_LSG_TRIVIA
+  previous: typeof INITIAL_LSG_TRIVIA
+}
 
-  const districtName = getDistrictName(router.query.districtName?.toString());
+interface LSGProps {
+  patientsToday: number,
+  lsgTrivia: LSGTrivia
+}
 
+const LSG = ({ patientsToday, lsgTrivia }: LSGProps) => {
   return (
     <div className="container mx-auto px-4">
       <ContentNav />
       <div className="grid gap-1 grid-rows-none mb-8 sm:grid-flow-col-dense sm:grid-rows-1 sm:place-content-end">
-        <ValuePill title="Facility Count" value={1231} />
-        <ValuePill title="Patient Count" value={432} />
+        <ValuePill title="Facility Count" value={lsgTrivia.current.count} />
+        <ValuePill title="Patient Count" value={patientsToday} />
       </div>
       <div className="grid grid-col-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8 ">
-        {Object.entries(PATIENT_TYPES).map(([key, value], i) => {
-          if (key !== "total_patients") {
+        {
+          Object.entries(PATIENT_TYPES).map(([key, value], i) => {
+            const theKey = key as keyof typeof PATIENT_TYPES
             return (
               <InfoCard
                 key={i}
                 title={value}
-                //@ts-ignore
-                value={Math.random() * 500 + 200}
-                delta={
-                  //@ts-ignore
-                  (Math.random() * 100 + 50) * (Math.random() > 0.5 ? -1 : 1)
-                }
+                value={lsgTrivia.current[theKey].today}
+                delta={lsgTrivia.current[theKey].total}
               />
-            );
-          }
-        })}
+            )
+          })
+        }
       </div>
       <div className="py-12">
         <TableExportHeader
@@ -107,9 +108,37 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   });
 
+  const initialTrivia = {
+    current: INITIAL_LSG_TRIVIA,
+    previous: INITIAL_LSG_TRIVIA
+  };
+
+  const getKey = (date: string): keyof typeof initialTrivia => {
+    return date === toDateString(today) ? "current" : "previous"
+  };
+
+  const lsgTrivia = filtered.reduce((acc, curr) => {
+    const key = getKey(curr.created_date);
+    const patientkeys = _.keys(PATIENT_TYPES) as (keyof typeof PATIENT_TYPES)[]
+
+    acc[key].count += 1;
+    patientkeys.forEach(type => {
+      acc[key][type].today += curr.data[`today_patients_${type}`] || 0
+      acc[key][type].total += curr.data[`total_patients_${type}`] || 0
+    })
+
+    return acc
+  }, initialTrivia);
+
+  const patientsToday = filtered.reduce((acc, curr) => {
+    acc += curr.today;
+    return acc;
+  }, 0);
+
   return {
     props: {
-
+      patientsToday,
+      lsgTrivia
     }
   }
 }
