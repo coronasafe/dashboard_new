@@ -9,7 +9,7 @@ import { TableExportHeader } from "../../../components/TableExportHeader";
 import { ACTIVATED_DISTRICTS, PATIENT_TYPES, TESTS_TYPES } from "../../../lib/common";
 import { columns, data } from "../../../utils/mock/GenericTableData";
 import { getNDateAfter, getNDateBefore, parameterize, toDateString } from "../../../utils/parser";
-import { careSummary } from "../../../lib/types";
+import { careSummary, FacilityData } from "../../../lib/types";
 
 const INITIAL_LSG_TRIVIA = {
   count: 0,
@@ -32,12 +32,22 @@ interface LSGTrivia {
   previous: typeof INITIAL_LSG_TRIVIA
 }
 
-interface LSGProps {
-  patientsToday: number,
-  lsgTrivia: LSGTrivia
+interface FilteredFacilites {
+  created_date: string;
+  total: number;
+  today: number;
+  facility: FacilityData;
+  modified_date: string;
+  data: FacilityData;
 }
 
-const LSG = ({ patientsToday, lsgTrivia }: LSGProps) => {
+interface LSGProps {
+  patientsToday: number,
+  lsgTrivia: LSGTrivia,
+  filtered: FilteredFacilites[]
+}
+
+const LSG = ({ filtered, patientsToday, lsgTrivia }: LSGProps) => {
   return (
     <div className="container mx-auto px-4">
       <ContentNav />
@@ -137,6 +147,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
+      filtered,
       patientsToday,
       lsgTrivia
     }
