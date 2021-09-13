@@ -39,6 +39,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <NavBar />
         <div className="container mx-auto px-4">
           <ContentNav />
+          <Filters />
         </div>
         <Component {...pageProps} />
       </SidebarProvider>
