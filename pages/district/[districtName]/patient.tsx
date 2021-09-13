@@ -59,7 +59,6 @@ const Patient = ({ data }: { data: CareSummaryResponse }) => {
 
   return (
     <div className="container mx-auto px-4">
-      <ContentNav />
       <div className="grid gap-1 grid-rows-none mb-8 sm:grid-flow-col-dense sm:grid-rows-1 sm:place-content-end my-5">
         <ValuePill
           title="Facility Count"
@@ -78,7 +77,7 @@ const Patient = ({ data }: { data: CareSummaryResponse }) => {
         <TableExportHeader
           label="Facilities"
           searchValue=""
-          setSearchValue={() => { }}
+          setSearchValue={() => {}}
         />
         {tableData.map((data, i) => (
           <BedsSummery key={i} data={data} />

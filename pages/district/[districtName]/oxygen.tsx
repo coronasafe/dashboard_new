@@ -39,7 +39,6 @@ const Oxygen = ({ oxygenCardData, oxygenFlatData }: OxygenProps) => {
 
   return (
     <div className="container mx-auto px-4">
-      <ContentNav />
       <h1 className="dark:text-gray-100 text-3xl my-4  round mt-12">
         District Summary
       </h1>
@@ -50,7 +49,7 @@ const Oxygen = ({ oxygenCardData, oxygenFlatData }: OxygenProps) => {
         <TableExportHeader
           label="Facilities"
           searchValue={""}
-          setSearchValue={() => { }}
+          setSearchValue={() => {}}
           className="mb-2"
         />
       </div>
@@ -58,7 +57,7 @@ const Oxygen = ({ oxygenCardData, oxygenFlatData }: OxygenProps) => {
         <TableExportHeader
           label="Facilities"
           searchValue={""}
-          setSearchValue={() => { }}
+          setSearchValue={() => {}}
           className="mb-2"
         />
         {tableData.map((data, index) => (

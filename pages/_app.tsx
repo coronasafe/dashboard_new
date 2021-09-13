@@ -9,6 +9,9 @@ import NavBar from "../components/NavBar";
 
 import { SidebarProvider } from "../lib/hooks";
 import theme from "../utils/theme";
+import Filter from "../components/Filter";
+import { Filters } from "../components/Filters";
+import ContentNav from "../components/ContentNav";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -34,6 +37,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <SidebarProvider>
         <NavBar />
+        <div className="container mx-auto px-4">
+          <ContentNav />
+        </div>
         <Component {...pageProps} />
       </SidebarProvider>
     </Windmill>

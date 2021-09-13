@@ -32,6 +32,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { TableExportHeader } from "../../../components/TableExportHeader";
 import _ from "lodash";
+import { Filters } from "../../../components/Filters";
 
 dayjs.extend(relativeTime);
 
@@ -65,7 +66,6 @@ const Capacity = ({
 
   return (
     <div className="2xl:container mx-auto px-4">
-      <ContentNav />
       <section id="charts">
         <div className="grid gap-1 grid-rows-none mb-8 sm:grid-flow-col-dense sm:grid-rows-1 sm:place-content-end my-5">
           <ValuePill

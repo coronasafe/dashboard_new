@@ -28,7 +28,6 @@ const Map = ({ filterDistrict, todayFiltered }: MapProps) => {
 
   return (
     <div className="container mx-auto px-4 my-4">
-      <ContentNav />
       <section id="capacity-map" className="py-4 my-4">
         <h1 className="dark:text-gray-100 text-3xl mb-4"> Map </h1>
 

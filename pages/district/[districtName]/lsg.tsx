@@ -6,9 +6,18 @@ import { InfoCard } from "../../../components/InfoCard";
 import { ValuePill } from "../../../components/Pill";
 import { GenericTable } from "../../../components/Table";
 import { TableExportHeader } from "../../../components/TableExportHeader";
-import { ACTIVATED_DISTRICTS, PATIENT_TYPES, TESTS_TYPES } from "../../../lib/common";
+import {
+  ACTIVATED_DISTRICTS,
+  PATIENT_TYPES,
+  TESTS_TYPES,
+} from "../../../lib/common";
 import { columns, data } from "../../../utils/mock/GenericTableData";
-import { getNDateAfter, getNDateBefore, parameterize, toDateString } from "../../../utils/parser";
+import {
+  getNDateAfter,
+  getNDateBefore,
+  parameterize,
+  toDateString,
+} from "../../../utils/parser";
 import { careSummary, FacilityData } from "../../../lib/types";
 
 const INITIAL_LSG_TRIVIA = {
@@ -28,8 +37,8 @@ const INITIAL_LSG_TRIVIA = {
 };
 
 interface LSGTrivia {
-  current: typeof INITIAL_LSG_TRIVIA
-  previous: typeof INITIAL_LSG_TRIVIA
+  current: typeof INITIAL_LSG_TRIVIA;
+  previous: typeof INITIAL_LSG_TRIVIA;
 }
 
 interface FilteredFacilites {
@@ -42,39 +51,36 @@ interface FilteredFacilites {
 }
 
 interface LSGProps {
-  patientsToday: number,
-  lsgTrivia: LSGTrivia,
-  filtered: FilteredFacilites[]
+  patientsToday: number;
+  lsgTrivia: LSGTrivia;
+  filtered: FilteredFacilites[];
 }
 
 const LSG = ({ filtered, patientsToday, lsgTrivia }: LSGProps) => {
   return (
     <div className="container mx-auto px-4">
-      <ContentNav />
       <div className="grid gap-1 grid-rows-none mb-8 sm:grid-flow-col-dense sm:grid-rows-1 sm:place-content-end">
         <ValuePill title="Facility Count" value={lsgTrivia.current.count} />
         <ValuePill title="Patient Count" value={patientsToday} />
       </div>
       <div className="grid grid-col-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8 ">
-        {
-          Object.entries(PATIENT_TYPES).map(([key, value], i) => {
-            const theKey = key as keyof typeof PATIENT_TYPES
-            return (
-              <InfoCard
-                key={i}
-                title={value}
-                value={lsgTrivia.current[theKey].today}
-                delta={lsgTrivia.current[theKey].total}
-              />
-            )
-          })
-        }
+        {Object.entries(PATIENT_TYPES).map(([key, value], i) => {
+          const theKey = key as keyof typeof PATIENT_TYPES;
+          return (
+            <InfoCard
+              key={i}
+              title={value}
+              value={lsgTrivia.current[theKey].today}
+              delta={lsgTrivia.current[theKey].total}
+            />
+          );
+        })}
       </div>
       <div className="py-12">
         <TableExportHeader
           label="LSG"
           searchValue={""}
-          setSearchValue={() => { }}
+          setSearchValue={() => {}}
           className="mb-2"
         />
         <GenericTable columns={columns} data={data} />
@@ -87,7 +93,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const district = _.find(
     ACTIVATED_DISTRICTS,
     (obj) =>
-      parameterize(obj.name) === parameterize(context.params?.districtName as string)
+      parameterize(obj.name) ===
+      parameterize(context.params?.districtName as string)
   );
 
   if (!district) {
@@ -113,31 +120,35 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       ...summary,
       created_date: toDateString(new Date(summary.created_date)),
-      total: _.keys(PATIENT_TYPES).map(type => summary.data[`total_patients_${type}`] || 0).reduce((a: number, b: number) => a + b, 0) as number,
-      today: _.keys(PATIENT_TYPES).map(type => summary.data[`today_patients_${type}`] || 0).reduce((a: number, b: number) => a + b, 0) as number,
+      total: _.keys(PATIENT_TYPES)
+        .map((type) => summary.data[`total_patients_${type}`] || 0)
+        .reduce((a: number, b: number) => a + b, 0) as number,
+      today: _.keys(PATIENT_TYPES)
+        .map((type) => summary.data[`today_patients_${type}`] || 0)
+        .reduce((a: number, b: number) => a + b, 0) as number,
     };
   });
 
   const initialTrivia = {
     current: INITIAL_LSG_TRIVIA,
-    previous: INITIAL_LSG_TRIVIA
+    previous: INITIAL_LSG_TRIVIA,
   };
 
   const getKey = (date: string): keyof typeof initialTrivia => {
-    return date === toDateString(today) ? "current" : "previous"
+    return date === toDateString(today) ? "current" : "previous";
   };
 
   const lsgTrivia = filtered.reduce((acc, curr) => {
     const key = getKey(curr.created_date);
-    const patientkeys = _.keys(PATIENT_TYPES) as (keyof typeof PATIENT_TYPES)[]
+    const patientkeys = _.keys(PATIENT_TYPES) as (keyof typeof PATIENT_TYPES)[];
 
     acc[key].count += 1;
-    patientkeys.forEach(type => {
-      acc[key][type].today += curr.data[`today_patients_${type}`] || 0
-      acc[key][type].total += curr.data[`total_patients_${type}`] || 0
-    })
+    patientkeys.forEach((type) => {
+      acc[key][type].today += curr.data[`today_patients_${type}`] || 0;
+      acc[key][type].total += curr.data[`total_patients_${type}`] || 0;
+    });
 
-    return acc
+    return acc;
   }, initialTrivia);
 
   const patientsToday = filtered.reduce((acc, curr) => {
@@ -149,9 +160,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       filtered,
       patientsToday,
-      lsgTrivia
-    }
-  }
-}
+      lsgTrivia,
+    },
+  };
+};
 
 export default LSG;
