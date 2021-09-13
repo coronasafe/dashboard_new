@@ -130,7 +130,7 @@ html.light body {
 
 /* daterange picker */
 .react-daterange-picker {
-  @applydark:hover:bg-gray-500 dark:hover:text-gray-300 dark:hover:bg-opacity-10 relative inline-flex px-2 w-full h-full dark:text-gray-400 text-gray-600 font-sans text-sm font-medium hover:bg-gray-100 dark:bg-gray-900 active:bg-transparent border border-transparent rounded-lg focus-within:outline-none shadow-xs cursor-pointer transition-colors duration-150;
+  @apply dark:hover:bg-gray-500 dark:hover:text-gray-300 dark:hover:bg-opacity-10 relative inline-flex px-2 w-full h-full dark:text-gray-400 text-gray-600 font-sans text-sm font-medium hover:bg-gray-100 dark:bg-gray-900 active:bg-transparent border border-transparent rounded-lg focus-within:outline-none shadow-sm cursor-pointer transition-colors duration-150;
 }
 .react-daterange-picker,
 .react-daterange-picker *,
