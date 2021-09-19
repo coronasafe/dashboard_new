@@ -29,6 +29,7 @@ import {
   processFacilityTriviaForCapacityUpdate,
   CapacityCardDataForCapacity,
   processCapacityExportData,
+  parseFacilityTypeFromQuery,
 } from "../../../lib/common/processor";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -181,13 +182,9 @@ export const getServerSideProps: GetServerSideProps = async ({
     };
   }
   const queryDate = String(query.date);
-  const facilityType = (query?.facility_type as string)
-    ?.split(",")
-    .map((i) => {
-      const key = parseInt(i.trim());
-      return key >= 0 ? FACILITY_TYPES[key] : null;
-    })
-    .filter((i) => i != null) as string[];
+  const facilityType = parseFacilityTypeFromQuery(
+    query?.facility_type as string
+  );
 
   const today = new Date();
 

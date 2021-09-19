@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import _ from "lodash";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
@@ -5,6 +6,7 @@ import ContentNav from "../../../components/ContentNav";
 import GMap from "../../../components/GMap/GMap";
 import { ACTIVATED_DISTRICTS } from "../../../lib/common";
 import {
+  parseFacilityTypeFromQuery,
   ProcessFacilityDataReturnType,
   processFacilityDataUpdate,
 } from "../../../lib/common/processor";
@@ -40,6 +42,7 @@ const Map = ({ filterDistrict, todayFiltered }: MapProps) => {
 export default Map;
 export const getServerSideProps: GetServerSideProps = async ({
   params,
+  query,
 }: GetServerSidePropsContext) => {
   const district = _.find(
     ACTIVATED_DISTRICTS,
@@ -52,9 +55,19 @@ export const getServerSideProps: GetServerSideProps = async ({
       notFound: true,
     };
   }
+  const queryDate = String(query.date);
+  const facilityType = parseFacilityTypeFromQuery(
+    query?.facility_type as string
+  );
+
   const today = new Date();
-  const start_date = toDateString(getNDateBefore(today, 1));
-  const end_date = toDateString(getNDateAfter(today, 1));
+
+  const _start_date = dayjs(queryDate || null, "YYYY-MM-DD").isValid()
+    ? new Date(queryDate)
+    : today;
+  const _start_date_str = toDateString(_start_date);
+  const start_date = toDateString(getNDateBefore(_start_date, 1));
+  const end_date = toDateString(getNDateAfter(start_date, 2));
   const limit = 2000;
 
   const data = await careSummary(
@@ -64,11 +77,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     start_date,
     end_date
   );
-  const filtered = processFacilityDataUpdate(data.results);
-  const todayFiltered = _.filter(
-    filtered,
-    (f) => f.date === toDateString(today)
-  );
+  const filtered = processFacilityDataUpdate(data.results, facilityType);
+  const todayFiltered = _.filter(filtered, (f) => f.date === _start_date_str);
 
   return {
     props: {
