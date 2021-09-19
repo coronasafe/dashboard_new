@@ -2,9 +2,10 @@ import { Button, Input } from "@windmill/react-ui";
 import clsx from "clsx";
 import React from "react";
 import { CSVLink } from "react-csv";
+import { ExportData } from "../../lib/types/common";
 interface TableExportHeaderProps {
   label: string;
-  exportData?: { data: any; filename: string };
+  exportData?: ExportData;
   searchValue: string;
   setSearchValue: (value: string) => void;
   className?: string;

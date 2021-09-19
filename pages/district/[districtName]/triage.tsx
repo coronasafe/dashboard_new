@@ -1,29 +1,33 @@
 import { Pagination } from "@windmill/react-ui";
+import dayjs from "dayjs";
+import Fuse from "fuse.js";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { ColumnType, DefaultRecordType } from "rc-table/lib/interface";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ContentNav from "../../../components/ContentNav";
 import { InfoCard } from "../../../components/InfoCard";
 import { ValuePill } from "../../../components/Pill";
 import { GenericTable } from "../../../components/Table";
 import { TableExportHeader } from "../../../components/TableExportHeader";
-import { ACTIVATED_DISTRICTS, TRIAGE_TYPES } from "../../../lib/common";
+import {
+  ACTIVATED_DISTRICTS,
+  FACILITY_TYPES,
+  TRIAGE_TYPES,
+} from "../../../lib/common";
 import {
   processFacilityDataUpdate,
   TriageFacilitiesTrivia,
 } from "../../../lib/common/processor";
 import {
-  processTestFacilitiesTriviaData,
-  getTestTableData,
-} from "../../../lib/common/processor/testsProcessor";
-import {
   getTriageTableData,
   getTriageTableRow,
+  processTriageExportData,
   processTriageFacilitiesTriviaData,
   TriageTableData,
 } from "../../../lib/common/processor/triageProcessor";
 import { careSummary } from "../../../lib/types";
+import { ExportData } from "../../../lib/types/common";
 import { data } from "../../../utils/mock/GenericTableData";
 import {
   getDistrictName,
@@ -82,26 +86,36 @@ const columns: ColumnType<DefaultRecordType>[] = [
 interface TriagesProps {
   facilityTrivia: TriageFacilitiesTrivia;
   tableData: TriageTableData[];
+  exportData: ExportData;
 }
 
 const Triage = ({
   facilityTrivia,
   tableData: initialTableData,
+  exportData,
 }: TriagesProps) => {
-  const router = useRouter();
-
+  const tableDataFuse = useRef(
+    new Fuse(initialTableData, { keys: ["facility_name"], threshold: 0.4 })
+  );
   const [tableData, setTableData] = useState<TriageTableData[]>([]);
-
+  const [searchTerm, setSearchTerm] = useState("");
   const tableRows = getTriageTableRow(tableData);
 
   const [page, setPage] = useState(0);
   const resultsPerPage = 10;
 
   useEffect(() => {
-    setTableData(
-      initialTableData.slice(page * resultsPerPage, (page + 1) * resultsPerPage)
-    );
-  }, [initialTableData, page]);
+    const skip = (page - 1) * resultsPerPage;
+    const end = skip + resultsPerPage;
+    if (searchTerm.length) {
+      const newData = tableDataFuse.current
+        .search(searchTerm)
+        .map((i) => i.item);
+      setTableData(newData.slice(0, 10));
+    } else {
+      setTableData(initialTableData.slice(skip, end));
+    }
+  }, [searchTerm, page]);
 
   return (
     <div className="container mx-auto px-4">
@@ -131,9 +145,10 @@ const Triage = ({
       <div className="py-12">
         <TableExportHeader
           label="Facilities"
-          searchValue={""}
-          setSearchValue={() => {}}
+          searchValue={searchTerm}
+          setSearchValue={setSearchTerm}
           className="mb-2"
+          exportData={exportData}
         />
         <GenericTable columns={columns} data={tableRows} />
         <div className="mt-4">
@@ -151,7 +166,10 @@ const Triage = ({
 
 export default Triage;
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  query,
+}) => {
   const district = ACTIVATED_DISTRICTS.find(
     (obj) =>
       parameterize(obj.name) === parameterize(params?.districtName as string)
@@ -162,10 +180,23 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       notFound: true,
     };
   }
+  const queryDate = String(query.date);
+  const facilityType = (query?.facility_type as string)
+    ?.split(",")
+    .map((i) => {
+      const key = parseInt(i.trim());
+      return key >= 0 ? FACILITY_TYPES[key] : null;
+    })
+    .filter((i) => i != null) as string[];
 
   const today = new Date();
-  const start_date = toDateString(getNDateBefore(today, 1));
-  const end_date = toDateString(getNDateAfter(today, 1));
+
+  const _start_date = dayjs(queryDate || null, "YYYY-MM-DD").isValid()
+    ? new Date(queryDate)
+    : today;
+  const _start_date_str = toDateString(_start_date);
+  const start_date = toDateString(getNDateBefore(_start_date, 1));
+  const end_date = toDateString(getNDateAfter(start_date, 2));
   const limit = 2000;
 
   const data = await careSummary(
@@ -176,15 +207,21 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     end_date
   );
 
-  const filtered = processFacilityDataUpdate(data.results);
+  const filtered = processFacilityDataUpdate(data.results, facilityType);
 
-  const facilityTrivia = processTriageFacilitiesTriviaData(filtered);
-  const tableData = getTriageTableData(filtered);
+  const facilityTrivia = processTriageFacilitiesTriviaData(
+    filtered,
+    _start_date_str
+  );
+  const tableData = getTriageTableData(filtered, _start_date_str);
+
+  const exportData = processTriageExportData(filtered, _start_date);
 
   return {
     props: {
       facilityTrivia,
       tableData,
+      exportData,
     },
   };
 };

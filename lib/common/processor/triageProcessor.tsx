@@ -10,7 +10,8 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 export const processTriageFacilitiesTriviaData = (
-  facility: ProcessFacilityDataReturnType
+  facility: ProcessFacilityDataReturnType,
+  filterDate?: string
 ) => {
   const initial = {
     current: _.cloneDeep(INITIAL_TRIAGE_FACILITIES_TRIVIA),
@@ -18,7 +19,7 @@ export const processTriageFacilitiesTriviaData = (
   };
 
   const getKey: (date: string) => keyof typeof initial = (date) =>
-    date === toDateString(new Date()) ? "current" : "previous";
+    date === (filterDate || toDateString(new Date())) ? "current" : "previous";
 
   return facility.reduce((a, c) => {
     const key = getKey(c.date);
@@ -35,7 +36,7 @@ export const processTriageFacilitiesTriviaData = (
 
 export interface TriageTableData {
   id: string | null;
-  name: string | null;
+  facility_name: string | null;
   facility_type: string | null;
   phone_number: string | null;
   modified_date: string | null;
@@ -46,10 +47,12 @@ export interface TriageTableData {
   patients_home_quarantine: string | null;
 }
 
-export const getTriageTableData = (facility: ProcessFacilityDataReturnType) => {
-  const date = new Date();
+export const getTriageTableData = (
+  facility: ProcessFacilityDataReturnType,
+  filterDate?: string
+) => {
   return facility.reduce((a, c) => {
-    if (c.date !== toDateString(date)) {
+    if (c.date !== (filterDate || toDateString(new Date()))) {
       return a;
     }
 
@@ -57,7 +60,7 @@ export const getTriageTableData = (facility: ProcessFacilityDataReturnType) => {
       ...a,
       {
         id: c.id ?? null,
-        name: c.name ?? null,
+        facility_name: c.name ?? null,
         facility_type: c.facility_type ?? null,
         phone_number: c.phone_number ?? null,
         modified_date: c.modified_date ?? null,
@@ -107,7 +110,7 @@ export const getTriageTableRow = (data: TriageTableData[]) => {
     return {
       name: (
         <TriageTableRow
-          name={d.name}
+          name={d.facility_name}
           facility_type={d.facility_type}
           id={d.id}
           phone_number={d.phone_number}
@@ -121,4 +124,51 @@ export const getTriageTableRow = (data: TriageTableData[]) => {
       patientsHomeQuarantine: d.patients_home_quarantine,
     };
   });
+};
+
+export const processTriageExportData = (
+  facilityData: ProcessFacilityDataReturnType,
+  date: Date
+) => {
+  const filename = "triage_export.csv";
+
+  const data = _.reduce(
+    facilityData,
+    (a, c) => {
+      if (c.date !== toDateString(date)) {
+        return a;
+      }
+
+      const additionalData = _.reduce(
+        Object.keys(TRIAGE_TYPES),
+        (acc, cur) => {
+          const copy = _.cloneDeep(acc);
+          const key = cur as unknown as keyof typeof TRIAGE_TYPES;
+          copy[TRIAGE_TYPES[key]] = c[key] || 0;
+
+          return copy;
+        },
+        {} as any
+      );
+
+      const newData = [
+        ...a,
+        {
+          "Hospital/CFLTC Name": c.name,
+          "Hospital/CFLTC Address": c.address,
+          "Govt/Pvt": c.facility_type.startsWith("Govt") ? "Govt" : "Pvt",
+          "Hops/CFLTC":
+            c.facility_type === "First Line Treatment Centre"
+              ? "CFLTC"
+              : "Hops",
+          Mobile: c.phone_number ? String(c.phone_number) : null,
+          ...additionalData,
+        },
+      ];
+      return newData;
+    },
+    [] as any[]
+  );
+
+  return { data, filename };
 };

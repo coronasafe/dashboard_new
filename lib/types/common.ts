@@ -5,3 +5,8 @@ export interface District {
   lng: number;
   zoom: number;
 }
+
+export type ExportData = {
+  data: any[];
+  filename: string;
+};
