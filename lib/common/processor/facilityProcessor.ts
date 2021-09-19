@@ -23,7 +23,13 @@ import {
   Inventory,
 } from "../../types";
 import { CapacityCardDataForCapacity } from "./types";
-import { COVID_BEDS, NON_COVID_BEDS } from "..";
+import {
+  AVAILABILITY_TYPES_ORDERED,
+  COVID_BEDS,
+  GOVT_FACILITY_TYPES,
+  NON_COVID_BEDS,
+} from "..";
+import { ProcessFacilityDataReturnType } from ".";
 
 dayjs.extend(relativeTime);
 dayjs.extend(minMax);
@@ -62,7 +68,10 @@ const additionalData = (data: FacilityData) => {
   };
 };
 
-export const processFacilityDataUpdate = (facilities: FacilitySummary[]) => {
+export const processFacilityDataUpdate = (
+  facilities: FacilitySummary[],
+  filterFacility?: string[]
+) => {
   const facility = _.filter(facilities, (f) => !!f.facility);
 
   const facilityData = _.map(
@@ -117,11 +126,16 @@ export const processFacilityDataUpdate = (facilities: FacilitySummary[]) => {
     }
   );
 
-  return facilityData;
+  const data = filterFacility?.length
+    ? _.filter(facilityData, (f) => filterFacility.includes(f.facility_type))
+    : facilityData;
+
+  return data;
 };
 
 export const processFacilityTriviaForCapacityUpdate = (
-  facility: ReturnType<typeof processFacilityDataUpdate>
+  facility: ReturnType<typeof processFacilityDataUpdate>,
+  filterDate?: string
 ) => {
   const initial = {
     current: _.cloneDeep(INITIAL_FACILITIES_TRIVIA),
@@ -129,7 +143,7 @@ export const processFacilityTriviaForCapacityUpdate = (
   };
 
   const getKey: (date: string) => keyof typeof initial = (date) =>
-    date === toDateString(new Date()) ? "current" : "previous";
+    date === (filterDate || toDateString(new Date())) ? "current" : "previous";
 
   const data = facility.reduce((a, c) => {
     const key = getKey(c.date);
@@ -175,7 +189,8 @@ export const processFacilityTriviaForCapacityUpdate = (
 };
 
 export const processCapacityCardDataForCapacityUpdate = (
-  facilities: ReturnType<typeof processFacilityDataUpdate>
+  facilities: ReturnType<typeof processFacilityDataUpdate>,
+  filterDate?: string
 ) => {
   return _.reduce(
     facilities,
@@ -188,7 +203,10 @@ export const processCapacityCardDataForCapacityUpdate = (
 
       const finalTotalData = getFinalTotalData(covidData, nonCovidData);
       const noCapacity = _.every(finalTotalData, (item) => item.total === 0);
-      if (curr.date !== toDateString(new Date()) || noCapacity) {
+      if (
+        curr.date !== (filterDate || toDateString(new Date())) ||
+        noCapacity
+      ) {
         return acc;
       }
       return [
@@ -211,4 +229,56 @@ export const processCapacityCardDataForCapacityUpdate = (
     },
     [] as CapacityCardDataForCapacity[]
   );
+};
+
+export const processCapacityExportData = (
+  facilityData: ProcessFacilityDataReturnType,
+  date: Date
+) => {
+  const filename = "capacity_export.csv";
+
+  const data = _.reduce(
+    facilityData,
+    (a, c) => {
+      if (c.date !== toDateString(date)) {
+        return a;
+      }
+
+      const additionalData = _.reduce(
+        AVAILABILITY_TYPES_ORDERED,
+        (acc, cur) => {
+          const copy = _.cloneDeep(acc);
+          const key = cur as unknown as keyof typeof AVAILABILITY_TYPES;
+          copy[`Current ${AVAILABILITY_TYPES[key]}`] =
+            c.capacity?.[cur]?.current_capacity || 0;
+          copy[`Total ${AVAILABILITY_TYPES[key]}`] =
+            c.capacity?.[cur]?.total_capacity || 0;
+
+          return copy;
+        },
+        {} as any
+      );
+
+      const newData = [
+        ...a,
+        {
+          "Govt/Pvt": GOVT_FACILITY_TYPES.includes(c.facility_type)
+            ? "Govt"
+            : "Pvt",
+          "Hops/CFLTC":
+            c.facility_type === "First Line Treatment Centre"
+              ? "CFLTC"
+              : "Hops" || null,
+          "Hospital/CFLTC Address": c.address || null,
+          "Hospital/CFLTC Name": c.name || null,
+          Mobile: c.phone_number ? String(c.phone_number) : null,
+          ...additionalData,
+        },
+      ];
+      return newData;
+    },
+    [] as any[]
+  );
+
+  return { data, filename };
 };
