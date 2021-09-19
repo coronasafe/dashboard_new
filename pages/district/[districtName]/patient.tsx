@@ -18,44 +18,64 @@ import {
   FACILITY_TYPES,
   PATIENT_TYPES,
 } from "../../../lib/common";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   PatientCardDataForCapacity,
+  PatientFacilitiesTrivia,
   PatientTypeKeys,
+  ProcessFacilityDataReturnType,
   processFacilityDataUpdate,
 } from "../../../lib/common/processor";
 import {
   processPatientCardData,
+  processPatientExportData,
   processPatientFacilitiesTriviaData,
 } from "../../../lib/common/processor/patientProcessor";
 import { InfoCard } from "../../../components/InfoCard";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import _ from "lodash";
 import { Pagination } from "@windmill/react-ui";
+import dayjs from "dayjs";
+import Fuse from "fuse.js";
 
-const Patient = ({ data }: { data: CareSummaryResponse }) => {
-  const router = useRouter();
-  const districtName = router.query.districtName;
-  const district = getDistrict(districtName?.toString());
-  const [facilityType, setFacilityType] = useState(FACILITY_TYPES);
-  const [date, dateOnChange] = useState(new Date());
-  const [filterDistrict, setFilterDistrict] = useState(ACTIVATED_DISTRICTS[0]);
+interface PatientProps {
+  filtered: ProcessFacilityDataReturnType;
+  facilityTrivia: PatientFacilitiesTrivia;
+  patientCardData: PatientCardDataForCapacity[];
 
-  if (!data || !district) return <Loader />;
+  exportData: {
+    data: any[];
+    filename: string;
+  };
+}
+
+const Patient: React.FC<PatientProps> = ({
+  exportData,
+  facilityTrivia,
+  filtered,
+  patientCardData,
+}) => {
   const [tableData, setTableData] = useState<PatientCardDataForCapacity[]>([]);
-
-  const filtered = processFacilityDataUpdate(data.results);
-  const facilityTrivia = processPatientFacilitiesTriviaData(filtered);
-  const patientCardData = processPatientCardData(filtered);
+  const tableDataFuse = useRef(
+    new Fuse(patientCardData, { keys: ["facility_name"], threshold: 0.4 })
+  );
   const [filteredData, setFilteredData] = useState(patientCardData);
+  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
   const resultsPerPage = 10;
 
   useEffect(() => {
-    setTableData(
-      filteredData.slice(page * resultsPerPage, (page + 1) * resultsPerPage)
-    );
-  }, [filteredData, page]);
+    const skip = (page - 1) * resultsPerPage;
+    const end = skip + resultsPerPage;
+    if (searchTerm.length) {
+      const newData = tableDataFuse.current
+        .search(searchTerm)
+        .map((i) => i.item);
+      setTableData(newData.slice(0, 10));
+    } else {
+      setTableData(patientCardData.slice(skip, end));
+    }
+  }, [searchTerm, page]);
 
   return (
     <div className="container mx-auto px-4">
@@ -76,8 +96,9 @@ const Patient = ({ data }: { data: CareSummaryResponse }) => {
       <div className="my-16">
         <TableExportHeader
           label="Facilities"
-          searchValue=""
-          setSearchValue={() => {}}
+          searchValue={searchTerm}
+          setSearchValue={setSearchTerm}
+          exportData={exportData}
         />
         {tableData.map((data, i) => (
           <BedsSummery key={i} data={data} />
@@ -99,6 +120,7 @@ export default Patient;
 
 export const getServerSideProps: GetServerSideProps = async ({
   params,
+  query,
 }: GetServerSidePropsContext) => {
   const district = _.find(
     ACTIVATED_DISTRICTS,
@@ -112,9 +134,23 @@ export const getServerSideProps: GetServerSideProps = async ({
     };
   }
 
+  const queryDate = String(query.date);
+  const facilityType = (query?.facility_type as string)
+    ?.split(",")
+    .map((i) => {
+      const key = parseInt(i.trim());
+      return key >= 0 ? FACILITY_TYPES[key] : null;
+    })
+    .filter((i) => i != null) as string[];
+
   const today = new Date();
-  const start_date = toDateString(getNDateBefore(today, 1));
-  const end_date = toDateString(getNDateAfter(today, 1));
+
+  const _start_date = dayjs(queryDate || null, "YYYY-MM-DD").isValid()
+    ? new Date(queryDate)
+    : today;
+  const _start_date_str = toDateString(_start_date);
+  const start_date = toDateString(getNDateBefore(_start_date, 1));
+  const end_date = toDateString(getNDateAfter(start_date, 2));
   const limit = 2000;
 
   const data = await careSummary(
@@ -125,42 +161,21 @@ export const getServerSideProps: GetServerSideProps = async ({
     end_date
   );
 
-  // const exported = {
-  //   data: filtered.reduce((a, c) => {
-  //     if (c.date !== toDateString(date)) {
-  //       return a;
-  //     }
-  //     return [
-  //       ...a,
-  //       {
-  //         "Govt/Pvt": GOVT_FACILITY_TYPES.includes(c.facilityType)
-  //           ? "Govt"
-  //           : "Pvt",
-  //         "Hops/CFLTC":
-  //           c.facilityType === "First Line Treatment Centre"
-  //             ? "CFLTC"
-  //             : "Hops" || null,
-  //         "Hospital/CFLTC Address": c.address || null,
-  //         "Hospital/CFLTC Name": c.name || null,
-  //         Mobile: c.phoneNumber || null,
-  //         ...AVAILABILITY_TYPES_ORDERED.reduce((t, x) => {
-  //           const y = { ...t };
-  //           y[`Current ${AVAILABILITY_TYPES[x]}`] =
-  //             c.capacity[x]?.current_capacity || 0;
-  //           y[`Total ${AVAILABILITY_TYPES[x]}`] =
-  //             c.capacity[x]?.total_capacity || 0;
-  //           return y;
-  //         }, {}),
-  //       },
-  //     ];
-  //   }, []),
-  //   filename: "capacity_export.csv",
-  // };
+  const filtered = processFacilityDataUpdate(data.results, facilityType);
+  const facilityTrivia = processPatientFacilitiesTriviaData(
+    filtered,
+    _start_date_str
+  );
+  const patientCardData = processPatientCardData(filtered, _start_date_str);
+  const exportData = processPatientExportData(filtered, _start_date);
 
   return {
     props: {
       data,
-      // exported,
+      filtered,
+      facilityTrivia,
+      patientCardData,
+      exportData,
     },
   };
 };

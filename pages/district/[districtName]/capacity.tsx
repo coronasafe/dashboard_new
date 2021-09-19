@@ -74,7 +74,7 @@ const Capacity = ({
       const newData = tableDataFuse.current
         .search(searchTerm)
         .map((i) => i.item);
-      setTableData(newData.slice(skip, end));
+      setTableData(newData.slice(0, 10));
     } else {
       setTableData(capacityCardData.slice(skip, end));
     }
