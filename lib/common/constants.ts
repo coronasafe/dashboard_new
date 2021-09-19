@@ -243,6 +243,8 @@ export const INITIAL_LSG_TRIVIA = {
   home_quarantine: { total: 0, today: 0 },
   paediatric_ward: { total: 0, today: 0 },
   gynaecology_ward: { total: 0, today: 0 },
+  bed_with_oxygen_support: { total: 0, today: 0 },
+  icu_with_oxygen_support: { total: 0, today: 0 },
   icu_with_invasive_ventilator: { total: 0, today: 0 },
   icu_with_non_invasive_ventilator: { total: 0, today: 0 },
 };

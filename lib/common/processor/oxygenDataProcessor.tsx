@@ -5,6 +5,7 @@ import React from "react";
 import { Database, Activity, Clock, AlertTriangle } from "react-feather";
 import { ProcessFacilityDataReturnType } from ".";
 import {
+  OXYGEN_INVENTORY,
   OXYGEN_INVENTORY_ENUM,
   OXYGEN_INVENTORY_MAP,
   OXYGEN_INVENTORY_NAME,
@@ -108,11 +109,11 @@ const getCardData = (facility: ProcessFacilityDataReturnType[number]) => {
 };
 
 export const getOxygenCardData = (
-  data: ProcessFacilityDataReturnType
+  data: ProcessFacilityDataReturnType,
+  filterDate?: string
 ): OxygenCardData[] => {
-  const today = new Date();
   return data.reduce((acc, cur) => {
-    if (cur.date === toDateString(today)) {
+    if (cur.date === (filterDate || toDateString(new Date()))) {
       if (
         cur.inventory &&
         Object.keys(cur.inventory).length !== 0 &&
@@ -139,13 +140,13 @@ export const getOxygenCardData = (
 };
 
 export const getOxygenFlatData = (
-  data: ProcessFacilityDataReturnType
+  data: ProcessFacilityDataReturnType,
+  filterDate?: string
 ): Inventory[] => {
-  const today = new Date();
   return _.chain(data)
     .filter((c) => {
       return !!(
-        c.date === toDateString(today) &&
+        c.date === (filterDate || toDateString(new Date())) &&
         c.inventory &&
         Object.keys(c.inventory).length !== 0 &&
         Object.keys(c.inventory).some((key) =>
@@ -272,4 +273,84 @@ export const getOxygenTableRows = (data: OxygenCardData) => {
       }),
     },
   ];
+};
+
+export const processOxygenExportData = (
+  facilityData: ProcessFacilityDataReturnType,
+  date: Date
+) => {
+  const filename = "oxygen_export.csv";
+
+  const data = _.reduce(
+    facilityData,
+    (a, c) => {
+      if (c.date !== toDateString(date)) {
+        return a;
+      }
+
+      if (
+        !(
+          c.inventory &&
+          Object.keys(c.inventory).length !== 0 &&
+          Object.keys(c.inventory).some((e) =>
+            Object.values(OXYGEN_INVENTORY).includes(Number(e))
+          )
+        )
+      ) {
+        return a;
+      }
+
+      const additionalData = Object.values(OXYGEN_INVENTORY).reduce(
+        (acc, cur) => {
+          const copy = _.cloneDeep(acc);
+
+          if (c.inventory?.[cur]?.item_name) {
+            copy[`Opening Stock ${c.inventory?.[cur]?.item_name}`] =
+              c.inventory[cur]?.start_stock || 0;
+            copy[`Stock Added Today ${c.inventory[cur]?.item_name}`] =
+              c.inventory[cur]?.total_added || 0;
+            copy[`Closing Stock ${c.inventory[cur]?.item_name}`] =
+              c.inventory[cur]?.end_stock || 0;
+            copy[`Total Consumed ${c.inventory[cur]?.item_name}`] =
+              c.inventory[cur]?.total_consumed || 0;
+            copy[`Current Stock ${c.inventory[cur]?.item_name}`] =
+              c.inventory[cur]?.stock || 0;
+            copy[`Unit ${c.inventory[cur]?.item_name}`] =
+              c.inventory[cur]?.unit || 0;
+            copy[`Is Low ${c.inventory[cur]?.item_name}`] =
+              c.inventory[cur]?.is_low || 0;
+            copy[`Burn Rate ${c.inventory[cur]?.item_name}`] =
+              c.inventory[cur]?.burn_rate || 0;
+            copy[`Updated at ${c.inventory[cur]?.item_name}`] =
+              c.inventory[cur]?.modified_date || 0;
+          }
+          return copy;
+        },
+        {} as any
+      );
+
+      const newData = {
+        "Govt/Pvt": c.facility_type,
+        "Hops/CFLTC":
+          c.facility_type === "First Line Treatment Centre" ? "CFLTC" : "Hops",
+        "Hospital/CFLTC Address": c.address,
+        "Hospital/CFLTC Name": c.name,
+        Mobile: c.phone_number,
+        "Expected Liquid Oxygen": c.expected_oxygen_requirement,
+        "Expected Type B Cylinders": c.expected_type_b_cylinders,
+        "Expected Type C Cylinders": c.expected_type_c_cylinders,
+        "Expected Type D Cylinders": c.expected_type_d_cylinders,
+        "Capacity Liquid Oxygen": c.oxygen_capacity,
+        "Capacity Type B Cylinders": c.type_b_cylinders,
+        "Capacity Type C Cylinders": c.type_c_cylinders,
+        "Capacity Type D Cylinders": c.type_d_cylinders,
+        ...additionalData,
+      };
+
+      return [...a, newData];
+    },
+    [] as any[]
+  );
+
+  return { data, filename };
 };

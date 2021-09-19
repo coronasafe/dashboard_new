@@ -26,6 +26,7 @@ import { CapacityCardDataForCapacity } from "./types";
 import {
   AVAILABILITY_TYPES_ORDERED,
   COVID_BEDS,
+  FACILITY_TYPES,
   GOVT_FACILITY_TYPES,
   NON_COVID_BEDS,
 } from "..";
@@ -281,4 +282,17 @@ export const processCapacityExportData = (
   );
 
   return { data, filename };
+};
+
+export const parseFacilityTypeFromQuery = (facility_type?: string) => {
+  if (!facility_type) return undefined;
+
+  const data = facility_type
+    ?.split(",")
+    .map((i) => {
+      const key = parseInt(i.trim());
+      return key >= 0 ? FACILITY_TYPES[key] : null;
+    })
+    .filter((i) => i != null) as string[];
+  return data;
 };
