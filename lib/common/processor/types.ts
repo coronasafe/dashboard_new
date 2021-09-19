@@ -4,6 +4,7 @@ import {
 } from ".";
 import { PATIENT_TYPES } from "..";
 import { CapacityBedData } from "../../../utils/parser";
+import { processLSG } from "./lsgProcessor";
 import { processPatientFacilitiesTriviaData } from "./patientProcessor";
 import { processTestFacilitiesTriviaData } from "./testsProcessor";
 import { processTriageFacilitiesTriviaData } from "./triageProcessor";
@@ -66,3 +67,5 @@ export type TestFacilitiesTrivia = ReturnType<
 export type TriageFacilitiesTrivia = ReturnType<
   typeof processTriageFacilitiesTriviaData
 >;
+
+export type processLSGReturnType = ReturnType<typeof processLSG>;

@@ -1,13 +1,13 @@
 import _ from "lodash";
 import { GetServerSideProps } from "next";
 import React from "react";
-import ContentNav from "../../../components/ContentNav";
 import { InfoCard } from "../../../components/InfoCard";
 import { ValuePill } from "../../../components/Pill";
 import { GenericTable } from "../../../components/Table";
 import { TableExportHeader } from "../../../components/TableExportHeader";
 import {
   ACTIVATED_DISTRICTS,
+  INITIAL_LSG_TRIVIA,
   PATIENT_TYPES,
   TESTS_TYPES,
 } from "../../../lib/common";
@@ -19,22 +19,13 @@ import {
   toDateString,
 } from "../../../utils/parser";
 import { careSummary, FacilityData } from "../../../lib/types";
-
-const INITIAL_LSG_TRIVIA = {
-  count: 0,
-  icu: { total: 0, today: 0 },
-  oxygen_bed: { total: 0, today: 0 },
-  not_admitted: { total: 0, today: 0 },
-  home_isolation: { total: 0, today: 0 },
-  isolation_room: { total: 0, today: 0 },
-  home_quarantine: { total: 0, today: 0 },
-  paediatric_ward: { total: 0, today: 0 },
-  gynaecology_ward: { total: 0, today: 0 },
-  bed_with_oxygen_support: { total: 0, today: 0 },
-  icu_with_oxygen_support: { total: 0, today: 0 },
-  icu_with_invasive_ventilator: { total: 0, today: 0 },
-  icu_with_non_invasive_ventilator: { total: 0, today: 0 },
-};
+import dayjs from "dayjs";
+import { parseFacilityTypeFromQuery } from "../../../lib/common/processor";
+import {
+  getTodaysPatients,
+  processLSG,
+  processLSGTrivia,
+} from "../../../lib/common/processor/lsgProcessor";
 
 interface LSGTrivia {
   current: typeof INITIAL_LSG_TRIVIA;
@@ -89,12 +80,14 @@ const LSG = ({ filtered, patientsToday, lsgTrivia }: LSGProps) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  query,
+}) => {
   const district = _.find(
     ACTIVATED_DISTRICTS,
     (obj) =>
-      parameterize(obj.name) ===
-      parameterize(context.params?.districtName as string)
+      parameterize(obj.name) === parameterize(params?.districtName as string)
   );
 
   if (!district) {
@@ -103,58 +96,33 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const today = new Date();
-  const start_date = toDateString(getNDateBefore(today, 1));
-  const end_date = toDateString(getNDateAfter(today, 1));
-  const limit = 5000;
+  const queryDate = String(query.date);
 
-  const response = await careSummary(
-    "patient",
-    context.params?.districtID as string,
+  const today = new Date();
+
+  const _start_date = dayjs(queryDate || null, "YYYY-MM-DD").isValid()
+    ? new Date(queryDate)
+    : today;
+
+  const _start_date_str = toDateString(_start_date);
+  const start_date = toDateString(getNDateBefore(_start_date, 1));
+  const end_date = toDateString(getNDateAfter(start_date, 2));
+  const limit = 2000;
+
+  const data = await careSummary(
+    "district_patient",
+    district.id,
     limit,
     start_date,
     end_date
   );
 
-  const filtered = response.results.flatMap((summary) => {
-    return {
-      ...summary,
-      created_date: toDateString(new Date(summary.created_date)),
-      total: _.keys(PATIENT_TYPES)
-        .map((type) => summary.data[`total_patients_${type}`] || 0)
-        .reduce((a: number, b: number) => a + b, 0) as number,
-      today: _.keys(PATIENT_TYPES)
-        .map((type) => summary.data[`today_patients_${type}`] || 0)
-        .reduce((a: number, b: number) => a + b, 0) as number,
-    };
-  });
+  const filtered = processLSG(data);
 
-  const initialTrivia = {
-    current: INITIAL_LSG_TRIVIA,
-    previous: INITIAL_LSG_TRIVIA,
-  };
+  console.log(filtered);
+  const lsgTrivia = processLSGTrivia(filtered, _start_date_str);
 
-  const getKey = (date: string): keyof typeof initialTrivia => {
-    return date === toDateString(today) ? "current" : "previous";
-  };
-
-  const lsgTrivia = filtered.reduce((acc, curr) => {
-    const key = getKey(curr.created_date);
-    const patientkeys = _.keys(PATIENT_TYPES) as (keyof typeof PATIENT_TYPES)[];
-
-    acc[key].count += 1;
-    patientkeys.forEach((type) => {
-      acc[key][type].today += curr.data[`today_patients_${type}`] || 0;
-      acc[key][type].total += curr.data[`total_patients_${type}`] || 0;
-    });
-
-    return acc;
-  }, initialTrivia);
-
-  const patientsToday = filtered.reduce((acc, curr) => {
-    acc += curr.today;
-    return acc;
-  }, 0);
+  const patientsToday = getTodaysPatients(filtered);
 
   return {
     props: {
