@@ -9,24 +9,79 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@windmill/react-ui";
+import dayjs from "dayjs";
+import Fuse from "fuse.js";
+import _ from "lodash";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import DatePicker from "react-date-picker/dist/entry.nostyle";
 import { Calendar, ChevronDown } from "react-feather";
-import { FACILITY_TYPES, GOVT_FACILITY_TYPES } from "../../lib/common";
+import {
+  FACILITY_TYPES,
+  FACILITY_TYPES_INDEX,
+  GOVT_FACILITY_TYPES,
+} from "../../lib/common";
+import { toDateString } from "../../utils/parser";
 
-export const Filters = () => {
+export interface FilterProps {
+  initialFacilityType?: string[];
+  initialDate?: string;
+  query?: URLSearchParams;
+}
+
+const facilityFuse = new Fuse(FACILITY_TYPES, {
+  shouldSort: true,
+  threshold: 0.3,
+});
+
+export const Filters: React.FC<FilterProps> = ({
+  initialFacilityType,
+  initialDate,
+  query,
+}) => {
   const [isFacilityTypeOpen, setIsFacilityTypeOpen] = useState(false);
-  const [facilityTypesFilterOptions, setFacilityTypesFilterOptions] =
-    useState(FACILITY_TYPES);
-
-  const [_filterFacilityTypes, _setFilterFacilityTypes] = useState<string[]>(
-    []
+  const router = useRouter();
+  const [facilityOptions, setFacilityOptions] = useState(FACILITY_TYPES);
+  const [filterDate, setFilterDate] = useState<Date | null>(
+    initialDate ? new Date(initialDate) : null
   );
-  const [facilityTypeFilterOpen, setFacilityTypeFilterOpen] = useState(false);
-  const resetFacilityTypeFilter = () => {
-    setFacilityTypeFilterOpen(false);
-    setFacilityTypesFilterOptions(FACILITY_TYPES);
+  const pathname = process.browser ? window.location.pathname : "/";
+  const [selectedFacility, setSelectedFacility] = useState(
+    initialFacilityType || []
+  );
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const q = e.target.value;
+    if (q) {
+      const result = facilityFuse.search(q).map((i) => i.item);
+      setFacilityOptions(result);
+    } else {
+      setFacilityOptions(FACILITY_TYPES);
+    }
   };
+
+  const handleAcceptClick = () => {
+    const q = selectedFacility?.map((i) => FACILITY_TYPES_INDEX[i]);
+    // console.log({ selectedFacility, FACILITY_TYPES, FACILITY_TYPES_INDEX });
+    if (q.length) {
+      query?.set("facility_type", q.join(","));
+    } else {
+      query?.delete("facility_type");
+    }
+    router.push(`${pathname}?${query?.toString() || ""}`);
+    setIsFacilityTypeOpen(false);
+  };
+
+  const handleDateChange = (e: Date) => {
+    if (dayjs(e).isValid()) {
+      query?.set("date", toDateString(e));
+    } else {
+      query?.delete("date");
+    }
+    setFilterDate(e);
+    router.push(`${pathname}?${query?.toString() || ""}`);
+  };
+
   return (
     <div className="flex flex-col items-center justify-between mb-2 px-4 bg-white dark:bg-black rounded-lg md:flex-row">
       <p className="dark:text-white font-semibold">Filters</p>
@@ -51,20 +106,11 @@ export const Filters = () => {
                   css
                   className="dark:bg-gray-900"
                   placeholder="Search facility types"
-                  onChange={(e) => {
-                    // TODO: Replace fuzzysort with fuse.js
-                    // setFacilityTypesFilterOptions(
-                    //     e.target.value
-                    //         ? fuzzysort
-                    //             .go(e.target.value, facilityTypesFilterOptions)
-                    //             .map((v) => v.target)
-                    //         : FACILITY_TYPES
-                    // );
-                  }}
+                  onChange={handleSearch}
                 />
                 <Button
                   layout="link"
-                  onClick={() => _setFilterFacilityTypes([])}
+                  onClick={() => setSelectedFacility([])}
                   className="dark:bg-gray-900 shadow-xs"
                 >
                   Clear
@@ -72,7 +118,7 @@ export const Filters = () => {
                 <Button
                   layout="link"
                   onClick={() => {
-                    _setFilterFacilityTypes(GOVT_FACILITY_TYPES);
+                    setSelectedFacility(GOVT_FACILITY_TYPES);
                   }}
                   className="whitespace-no-wrap dark:bg-gray-900 shadow-xs"
                 >
@@ -80,7 +126,7 @@ export const Filters = () => {
                 </Button>
                 <Button
                   layout="link"
-                  onClick={() => _setFilterFacilityTypes(FACILITY_TYPES)}
+                  onClick={() => setSelectedFacility(FACILITY_TYPES)}
                   className="dark:bg-gray-900 shadow-xs"
                 >
                   All
@@ -88,26 +134,24 @@ export const Filters = () => {
               </div>
 
               <HelperText className="ml-1">
-                {`Selected ${_filterFacilityTypes.length} items`}
+                {`Selected ${selectedFacility?.length || 0} items`}
               </HelperText>
 
               <Card className="flex flex-col mb-2 p-2 h-64 overflow-y-auto">
-                {facilityTypesFilterOptions.map((d, i) => (
+                {facilityOptions.map((d, i) => (
                   <Label key={i} check>
                     <Input
                       css
-                      onChange={() => {
-                        const _t = _filterFacilityTypes.indexOf(d);
-                        const _tmp = [..._filterFacilityTypes];
-                        if (_t > -1) {
-                          _tmp.splice(_t, 1);
-                        } else {
-                          _tmp.push(d);
-                        }
-                        _setFilterFacilityTypes(_tmp);
+                      onChange={(e) => {
+                        console.log(e);
+                        const newVal = !e.target.checked
+                          ? _.remove([...selectedFacility], (i) => i !== d)
+                          : _.uniq([...selectedFacility, d]);
+
+                        setSelectedFacility(newVal);
                       }}
                       type="checkbox"
-                      checked={_filterFacilityTypes.includes(d)}
+                      checked={selectedFacility?.includes(d)}
                     />
                     <span className="ml-2">{d}</span>
                   </Label>
@@ -122,7 +166,9 @@ export const Filters = () => {
               >
                 Cancel
               </Button>
-              <Button className="w-full sm:w-auto">Accept</Button>
+              <Button className="w-full sm:w-auto" onClick={handleAcceptClick}>
+                Accept
+              </Button>
             </ModalFooter>
           </Modal>
         </div>
@@ -131,7 +177,12 @@ export const Filters = () => {
           <Button layout="link" className="w-full shadow-xs">
             Range
           </Button>
-          <DatePicker calendarIcon={<Calendar />} />
+          <DatePicker
+            calendarIcon={<Calendar />}
+            value={filterDate}
+            maxDate={new Date()}
+            onChange={handleDateChange}
+          />
         </div>
       </div>
     </div>
