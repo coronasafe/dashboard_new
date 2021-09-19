@@ -25,11 +25,17 @@ export const RadialCard: React.FC<RadialCardProps> = ({
   className,
   reverseIndicator,
 }) => {
-  const current_used = Math.round((current.used / current.total) * 100);
-  const previous_used = Math.round((previous.used / previous.total) * 100);
+  const current_used = current.total
+    ? Math.round((current.used / current.total) * 100)
+    : 0;
+  const previous_used = previous.total
+    ? Math.round((previous.used / previous.total) * 100)
+    : 0;
   const diff = current_used - previous_used;
 
-  const _p = Math.round((current.used / current.total) * 100);
+  const _p = current.total
+    ? Math.round((current.used / current.total) * 100)
+    : 0;
 
   const isPositive = (value: number) =>
     !Number.isNaN(value) && value !== 0 && value > 0;
@@ -75,7 +81,7 @@ export const RadialCard: React.FC<RadialCardProps> = ({
           <div className="absolute inline-flex flex-col items-center justify-center self-center w-3/5 text-center text-sm xl:text-lg">
             <div className="space-x-1">
               <animated.span className="text-center text-4xl dark:text-gray-200 text-gray-700 font-semibold">
-                {innerProgress.to((x: number) => `${Math.round(x)}%`)}
+                {innerProgress.to((x: number) => `${Math.round(x) || 0}%`)}
               </animated.span>
             </div>
             {
