@@ -118,6 +118,8 @@ export const FACILITY_TYPES = [
   "TeleMedicine",
 ];
 
+export const FACILITY_TYPES_INDEX = _.invert(FACILITY_TYPES);
+
 // Table title
 export const OXYGEN_TYPES = {
   liquid: "Liquid Oxygen",

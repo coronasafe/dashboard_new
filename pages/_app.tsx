@@ -12,8 +12,23 @@ import theme from "../utils/theme";
 import Filter from "../components/Filter";
 import { Filters } from "../components/Filters";
 import ContentNav from "../components/ContentNav";
+import { useRouter } from "next/router";
+import { FACILITY_TYPES } from "../lib/common";
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const query = new URLSearchParams(
+    process.browser ? window.location.search : ""
+  );
+  const initialFacilityType = (query.get("facility_type") as string)
+    ?.split(",")
+    .map((i) => {
+      const key = parseInt(i.trim());
+      return key >= 0 ? FACILITY_TYPES[key] : null;
+    })
+    .filter((i) => i != null) as string[];
+  const initialDate = query.get("date") as string;
+  const filterProps = { initialFacilityType, initialDate, query };
+
   return (
     <Windmill usePreferences theme={theme}>
       <Head>
@@ -39,9 +54,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <NavBar />
         <div className="container mx-auto px-4">
           <ContentNav />
-          <Filters />
+          <Filters {...filterProps} />
         </div>
-        <Component {...pageProps} />
+        <Component {...pageProps} {...filterProps} />
       </SidebarProvider>
     </Windmill>
   );

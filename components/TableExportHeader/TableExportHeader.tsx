@@ -1,17 +1,17 @@
 import { Button, Input } from "@windmill/react-ui";
 import clsx from "clsx";
 import React from "react";
-
+import { CSVLink } from "react-csv";
 interface TableExportHeaderProps {
   label: string;
-  data?: any;
+  exportData?: { data: any; filename: string };
   searchValue: string;
   setSearchValue: (value: string) => void;
   className?: string;
 }
 
 export const TableExportHeader: React.FC<TableExportHeaderProps> = ({
-  data,
+  exportData,
   label,
   searchValue,
   setSearchValue,
@@ -26,11 +26,14 @@ export const TableExportHeader: React.FC<TableExportHeaderProps> = ({
     >
       <h1 className="dark:text-gray-100 text-3xl">{label}</h1>
       <div className="flex max-w-full space-x-4">
-        {true && (
-          // <CSVLink data={exported.data} filename={exported.filename}>
-          <Button block>Export</Button>
-          // </CSVLink>
+        {exportData && (
+          <CSVLink data={exportData?.data} filename={exportData?.filename}>
+            <Button block disabled={!exportData}>
+              Export
+            </Button>
+          </CSVLink>
         )}
+
         <Input
           css={{}}
           className="sw-40 rounded-lg sm:w-auto"

@@ -8,6 +8,7 @@ import {
   AVAILABILITY_TYPES,
   AVAILABILITY_TYPES_ORDERED,
   AVAILABILITY_TYPES_TOTAL_ORDERED,
+  FACILITY_TYPES,
 } from "../../../lib/common";
 import { careSummary, CareSummaryResponse } from "../../../lib/types";
 import {
@@ -18,7 +19,7 @@ import {
 } from "../../../utils/parser";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import GMap from "../../../components/GMap/GMap";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CapacityCard } from "../../../components/CapacityCard";
 import {
   processCapacityCardDataForCapacityUpdate,
@@ -27,22 +28,25 @@ import {
   ProcessFacilityDataReturnType,
   processFacilityTriviaForCapacityUpdate,
   CapacityCardDataForCapacity,
+  processCapacityExportData,
 } from "../../../lib/common/processor";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { TableExportHeader } from "../../../components/TableExportHeader";
 import _ from "lodash";
-import { Filters } from "../../../components/Filters";
+import { FilterProps, Filters } from "../../../components/Filters";
+import Fuse from "fuse.js";
 
 dayjs.extend(relativeTime);
 
-interface CapacityProps {
+interface CapacityProps extends FilterProps {
   data: CareSummaryResponse;
   filterDistrict: typeof ACTIVATED_DISTRICTS[number];
   capacityCardData: CapacityCardDataForCapacity[];
   facilitiesTrivia: FacilitiesTrivia;
   filtered: ProcessFacilityDataReturnType;
   todayFiltered: ProcessFacilityDataReturnType;
+  exportData: ReturnType<typeof processCapacityExportData>;
 }
 
 const Capacity = ({
@@ -52,17 +56,29 @@ const Capacity = ({
   facilitiesTrivia,
   filtered,
   todayFiltered,
+  exportData,
+  ...other
 }: CapacityProps) => {
-  const [tableData, setTableData] = useState(capacityCardData);
+  const tableDataFuse = useRef(
+    new Fuse(capacityCardData, { keys: ["facility_name"], threshold: 0.4 })
+  );
   const [searchTerm, setSearchTerm] = useState("");
+  const [tableData, setTableData] = useState(capacityCardData);
   const [page, setPage] = useState(0);
   const resultsPerPage = 10;
 
   useEffect(() => {
     const skip = (page - 1) * resultsPerPage;
     const end = skip + resultsPerPage;
-    setTableData(capacityCardData.slice(skip, end));
-  }, [page]);
+    if (searchTerm.length) {
+      const newData = tableDataFuse.current
+        .search(searchTerm)
+        .map((i) => i.item);
+      setTableData(newData.slice(skip, end));
+    } else {
+      setTableData(capacityCardData.slice(skip, end));
+    }
+  }, [searchTerm, page]);
 
   return (
     <div className="2xl:container mx-auto px-4">
@@ -127,13 +143,14 @@ const Capacity = ({
             label="Facilities"
             searchValue={searchTerm}
             setSearchValue={setSearchTerm}
+            exportData={exportData}
           />
           {tableData.map((tData, index) => (
             <CapacityCard data={tData} key={index} />
           ))}
           <Pagination
             resultsPerPage={10}
-            totalResults={capacityCardData.length}
+            totalResults={tableData.length}
             label=""
             onChange={(page) => setPage(page)}
           />
@@ -150,6 +167,7 @@ const Capacity = ({
 
 export const getServerSideProps: GetServerSideProps = async ({
   params,
+  query,
 }: GetServerSidePropsContext) => {
   const district = _.find(
     ACTIVATED_DISTRICTS,
@@ -162,10 +180,23 @@ export const getServerSideProps: GetServerSideProps = async ({
       notFound: true,
     };
   }
+  const queryDate = String(query.date);
+  const facilityType = (query?.facility_type as string)
+    ?.split(",")
+    .map((i) => {
+      const key = parseInt(i.trim());
+      return key >= 0 ? FACILITY_TYPES[key] : null;
+    })
+    .filter((i) => i != null) as string[];
 
   const today = new Date();
-  const start_date = toDateString(getNDateBefore(today, 1));
-  const end_date = toDateString(getNDateAfter(today, 1));
+
+  const _start_date = dayjs(queryDate || null, "YYYY-MM-DD").isValid()
+    ? new Date(queryDate)
+    : today;
+  const _start_date_str = toDateString(_start_date);
+  const start_date = toDateString(getNDateBefore(_start_date, 1));
+  const end_date = toDateString(getNDateAfter(start_date, 2));
   const limit = 2000;
 
   const data = await careSummary(
@@ -176,42 +207,18 @@ export const getServerSideProps: GetServerSideProps = async ({
     end_date
   );
 
-  const filtered = processFacilityDataUpdate(data.results);
-  const facilitiesTrivia = processFacilityTriviaForCapacityUpdate(filtered);
-  const capacityCardData = processCapacityCardDataForCapacityUpdate(filtered);
-  const todayFiltered = _.filter(filtered, (f) => f.date === start_date);
+  const filtered = processFacilityDataUpdate(data.results, facilityType);
+  const facilitiesTrivia = processFacilityTriviaForCapacityUpdate(
+    filtered,
+    _start_date_str
+  );
+  const capacityCardData = processCapacityCardDataForCapacityUpdate(
+    filtered,
+    _start_date_str
+  );
+  const todayFiltered = _.filter(filtered, (f) => f.date === _start_date_str);
 
-  // const exported = {
-  //   data: filtered.reduce((a, c) => {
-  //     if (c.date !== toDateString(date)) {
-  //       return a;
-  //     }
-  //     return [
-  //       ...a,
-  //       {
-  //         "Govt/Pvt": GOVT_FACILITY_TYPES.includes(c.facilityType)
-  //           ? "Govt"
-  //           : "Pvt",
-  //         "Hops/CFLTC":
-  //           c.facilityType === "First Line Treatment Centre"
-  //             ? "CFLTC"
-  //             : "Hops" || null,
-  //         "Hospital/CFLTC Address": c.address || null,
-  //         "Hospital/CFLTC Name": c.name || null,
-  //         Mobile: c.phoneNumber || null,
-  //         ...AVAILABILITY_TYPES_ORDERED.reduce((t, x) => {
-  //           const y = { ...t };
-  //           y[`Current ${AVAILABILITY_TYPES[x]}`] =
-  //             c.capacity[x]?.current_capacity || 0;
-  //           y[`Total ${AVAILABILITY_TYPES[x]}`] =
-  //             c.capacity[x]?.total_capacity || 0;
-  //           return y;
-  //         }, {}),
-  //       },
-  //     ];
-  //   }, []),
-  //   filename: "capacity_export.csv",
-  // };
+  const exportData = processCapacityExportData(filtered, _start_date);
 
   return {
     props: {
@@ -221,7 +228,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       facilitiesTrivia,
       filtered,
       todayFiltered,
-      // exported,
+      exportData,
     },
   };
 };
