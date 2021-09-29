@@ -103,13 +103,41 @@ export interface PatientSummary {
   [key: string]: SummaryCount;
 }
 
+export interface DistrictPatientSummery {
+  code: string;
+  name: string;
+  total_inactive: number;
+  today_patients_icu: number;
+  total_patients_icu: number;
+  today_patients_not_admitted: number;
+  total_patients_not_admitted: number;
+  today_patients_home_isolation: number;
+  today_patients_isolation_room: number;
+  total_patients_home_isolation: number;
+  total_patients_isolation_room: number;
+  today_patients_home_quarantine: number;
+  today_patients_paediatric_ward: number;
+  total_patients_home_quarantine: number;
+  total_patients_paediatric_ward: number;
+  today_patients_gynaecology_ward: number;
+  total_patients_gynaecology_ward: number;
+  today_patients_bed_with_oxygen_support: number;
+  today_patients_icu_with_oxygen_support: number;
+  total_patients_bed_with_oxygen_support: number;
+  total_patients_icu_with_oxygen_support: number;
+  today_patients_icu_with_invasive_ventilator: number;
+  total_patients_icu_with_invasive_ventilator: number;
+  today_patients_icu_with_non_invasive_ventilator: number;
+  total_patients_icu_with_non_invasive_ventilator: number;
+}
+
 export interface Inventory {
   unit: string;
   stock: number;
   is_low: boolean;
   burn_rate: number;
   end_stock: number;
-  item_name: "PPE";
+  item_name: string;
   start_stock: number;
   total_added: number;
   modified_date: string;
@@ -167,10 +195,26 @@ export interface CareSummaryResponse {
   previous: string;
   results: FacilitySummary[];
 }
+export interface DistrictSummaryResponse {
+  count: number;
+  next: string;
+  previous: string;
+  results: {
+    data: {
+      id: number;
+      modified_date: string;
+      name: string;
+      [key: number]: DistrictPatientSummery;
+    };
+    created_date: string;
+    modified_date: string;
+    district: number;
+  }[];
+}
 
 interface CareSummary {
   (
-    type: "facility" | "triage" | "patient" | "tests" | "district_patient",
+    type: "facility" | "triage" | "patient" | "tests",
     district: string | number,
     limit?: number,
     start_date?: string,
@@ -206,6 +250,34 @@ const careSummary: CareSummary = async (
         Accept: "application/json",
       },
     })
+    .then((response) => response.data)
+    .catch((_) =>
+      console.log(
+        "Something unknown happened when trying to make a network request"
+      )
+    );
+};
+export const districtSummery = async (
+  district: string | number,
+  limit = 2000,
+  start_date?: string,
+  end_date?: string
+): Promise<DistrictSummaryResponse> => {
+  return axios
+    .get(
+      `https://dashboard.coronasafe.network/api/v1/district_patient_summary`,
+      {
+        params: {
+          start_date,
+          end_date,
+          district,
+          limit,
+        },
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    )
     .then((response) => response.data)
     .catch((_) =>
       console.log(
