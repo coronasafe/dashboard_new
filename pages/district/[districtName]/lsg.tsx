@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { GetServerSideProps } from "next";
-import React from "react";
+import React, { useRef, useState } from "react";
 import { InfoCard } from "../../../components/InfoCard";
 import { ValuePill } from "../../../components/Pill";
 import { GenericTable } from "../../../components/Table";
@@ -11,22 +11,27 @@ import {
   PATIENT_TYPES,
   TESTS_TYPES,
 } from "../../../lib/common";
-import { columns, data } from "../../../utils/mock/GenericTableData";
+import { data } from "../../../utils/mock/GenericTableData";
 import {
   getNDateAfter,
   getNDateBefore,
   parameterize,
   toDateString,
 } from "../../../utils/parser";
-import { careSummary, FacilityData } from "../../../lib/types";
+import { careSummary, districtSummery, FacilityData } from "../../../lib/types";
 import dayjs from "dayjs";
-import { parseFacilityTypeFromQuery } from "../../../lib/common/processor";
 import {
+  parseFacilityTypeFromQuery,
+  processLSGReturnType,
+} from "../../../lib/common/processor";
+import {
+  getLsgTableRows,
   getTodaysPatients,
   processLSG,
   processLSGTrivia,
 } from "../../../lib/common/processor/lsgProcessor";
-
+import Fuse from "fuse.js";
+import { ColumnType, DefaultRecordType } from "rc-table/lib/interface";
 interface LSGTrivia {
   current: typeof INITIAL_LSG_TRIVIA;
   previous: typeof INITIAL_LSG_TRIVIA;
@@ -44,10 +49,51 @@ interface FilteredFacilites {
 interface LSGProps {
   patientsToday: number;
   lsgTrivia: LSGTrivia;
-  filtered: FilteredFacilites[];
+  filtered: processLSGReturnType;
 }
 
+const columns: ColumnType<DefaultRecordType>[] = [
+  {
+    title: "NAME OF LSG",
+    key: "name",
+    dataIndex: "name",
+    width: "18rem",
+    align: "left",
+  },
+  {
+    title: "LIVE",
+    key: "live",
+    dataIndex: "live",
+    width: "8rem",
+    align: "right",
+  },
+  {
+    title: "DISCHARGED",
+    key: "discharged",
+    dataIndex: "discharged",
+    width: "8rem",
+    align: "right",
+  },
+  ...Object.entries(PATIENT_TYPES).map(([key, value]) => {
+    return {
+      title: value,
+      key,
+      dataIndex: key,
+      width: value.length > 15 ? "16rem" : "9rem",
+      align: "right",
+    } as ColumnType<DefaultRecordType>;
+  }),
+];
+
 const LSG = ({ filtered, patientsToday, lsgTrivia }: LSGProps) => {
+  const [tableData, setTableData] = useState(filtered);
+  const tableDataFuse = useRef(
+    new Fuse(filtered, { keys: ["facility_name"], threshold: 0.4 })
+  );
+  const [page, setPage] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const resultsPerPage = 10;
+  const rows = getLsgTableRows(tableData);
   return (
     <div className="container mx-auto px-4">
       <div className="grid gap-1 grid-rows-none mb-8 sm:grid-flow-col-dense sm:grid-rows-1 sm:place-content-end">
@@ -61,8 +107,8 @@ const LSG = ({ filtered, patientsToday, lsgTrivia }: LSGProps) => {
             <InfoCard
               key={i}
               title={value}
-              value={lsgTrivia.current[theKey].today}
-              delta={lsgTrivia.current[theKey].total}
+              value={lsgTrivia.current[theKey].total}
+              delta={lsgTrivia.current[theKey].today}
             />
           );
         })}
@@ -74,7 +120,9 @@ const LSG = ({ filtered, patientsToday, lsgTrivia }: LSGProps) => {
           setSearchValue={() => {}}
           className="mb-2"
         />
-        <GenericTable columns={columns} data={data} />
+        <div className="overflow-x-hidden">
+          <GenericTable columns={columns} data={rows} scroll={{ x: 1000 }} />
+        </div>
       </div>
     </div>
   );
@@ -109,17 +157,10 @@ export const getServerSideProps: GetServerSideProps = async ({
   const end_date = toDateString(getNDateAfter(start_date, 2));
   const limit = 2000;
 
-  const data = await careSummary(
-    "district_patient",
-    district.id,
-    limit,
-    start_date,
-    end_date
-  );
+  const data = await districtSummery(district.id, limit, start_date, end_date);
 
   const filtered = processLSG(data);
 
-  console.log(filtered);
   const lsgTrivia = processLSGTrivia(filtered, _start_date_str);
 
   const patientsToday = getTodaysPatients(filtered);
