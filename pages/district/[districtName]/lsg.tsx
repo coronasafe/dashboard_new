@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { GetServerSideProps } from "next";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { InfoCard } from "../../../components/InfoCard";
 import { ValuePill } from "../../../components/Pill";
 import { GenericTable } from "../../../components/Table";
@@ -28,10 +28,13 @@ import {
   getLsgTableRows,
   getTodaysPatients,
   processLSG,
+  processLSGExportData,
   processLSGTrivia,
 } from "../../../lib/common/processor/lsgProcessor";
 import Fuse from "fuse.js";
 import { ColumnType, DefaultRecordType } from "rc-table/lib/interface";
+import { Pagination } from "@windmill/react-ui";
+import { processTestExportData } from "../../../lib/common/processor/testsProcessor";
 interface LSGTrivia {
   current: typeof INITIAL_LSG_TRIVIA;
   previous: typeof INITIAL_LSG_TRIVIA;
@@ -50,6 +53,7 @@ interface LSGProps {
   patientsToday: number;
   lsgTrivia: LSGTrivia;
   filtered: processLSGReturnType;
+  exportData: ReturnType<typeof processTestExportData>;
 }
 
 const columns: ColumnType<DefaultRecordType>[] = [
@@ -85,15 +89,30 @@ const columns: ColumnType<DefaultRecordType>[] = [
   }),
 ];
 
-const LSG = ({ filtered, patientsToday, lsgTrivia }: LSGProps) => {
+const LSG = ({ filtered, patientsToday, lsgTrivia, exportData }: LSGProps) => {
   const [tableData, setTableData] = useState(filtered);
   const tableDataFuse = useRef(
     new Fuse(filtered, { keys: ["facility_name"], threshold: 0.4 })
   );
   const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const resultsPerPage = 10;
+  const resultsPerPage = 20;
+
+  useEffect(() => {
+    const skip = (page - 1) * resultsPerPage;
+    const end = skip + resultsPerPage;
+    if (searchTerm.length) {
+      const newData = tableDataFuse.current
+        .search(searchTerm)
+        .map((i) => i.item);
+      setTableData(newData.slice(0, 10));
+    } else {
+      setTableData(filtered.slice(skip, end));
+    }
+  }, [searchTerm, page]);
+
   const rows = getLsgTableRows(tableData);
+
   return (
     <div className="container mx-auto px-4">
       <div className="grid gap-1 grid-rows-none mb-8 sm:grid-flow-col-dense sm:grid-rows-1 sm:place-content-end">
@@ -116,12 +135,21 @@ const LSG = ({ filtered, patientsToday, lsgTrivia }: LSGProps) => {
       <div className="py-12">
         <TableExportHeader
           label="LSG"
-          searchValue={""}
-          setSearchValue={() => {}}
+          searchValue={searchTerm}
+          setSearchValue={(val) => setSearchTerm(val)}
+          exportData={exportData}
           className="mb-2"
         />
         <div className="overflow-x-hidden">
           <GenericTable columns={columns} data={rows} scroll={{ x: 1000 }} />
+        </div>
+        <div className="mt-4">
+          <Pagination
+            resultsPerPage={resultsPerPage}
+            totalResults={searchTerm ? tableData.length : filtered.length}
+            label="Test Summary"
+            onChange={(page) => setPage(page)}
+          />
         </div>
       </div>
     </div>
@@ -164,12 +192,13 @@ export const getServerSideProps: GetServerSideProps = async ({
   const lsgTrivia = processLSGTrivia(filtered, _start_date_str);
 
   const patientsToday = getTodaysPatients(filtered);
-
+  const exportData = processLSGExportData(filtered, _start_date);
   return {
     props: {
       filtered,
       patientsToday,
       lsgTrivia,
+      exportData,
     },
   };
 };

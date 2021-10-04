@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import _, { isNumber } from "lodash";
 import { ArrowDown, ArrowUp } from "react-feather";
-import { PatientTypeKeys, processLSGReturnType } from ".";
+import { PatientTypeKeys, PatientTypeTotalKeys, processLSGReturnType } from ".";
 import { INITIAL_LSG_TRIVIA, PATIENT_TYPES } from "..";
 import { toDateString } from "../../../utils/parser";
 import { CareSummaryResponse, DistrictSummaryResponse } from "../../types";
@@ -54,7 +54,6 @@ export const processLSGTrivia = (
     if (!curr) return acc;
     const key = getKey(curr.created_date);
     const patientKeys = _.keys(PATIENT_TYPES) as (keyof typeof PATIENT_TYPES)[];
-    console.log({ curr });
     acc[key].count += 1;
     patientKeys.forEach((type) => {
       acc[key][type].today += curr[`today_patients_${type}`] || 0;
@@ -72,6 +71,58 @@ export const getTodaysPatients = (data: processLSGReturnType) => {
   }, 0);
 };
 
+export const processLSGExportData = (
+  facilityData: processLSGReturnType,
+  date: Date
+) => {
+  return {
+    filename: "patient_export.csv",
+    data: facilityData.reduce((a, c) => {
+      if (c?.created_date !== toDateString(date)) {
+        return a;
+      }
+      return [
+        ...a,
+        {
+          Name: c.name,
+          ...Object.keys(PATIENT_TYPES).reduce((t, x) => {
+            const key = `total_patients_${x}` as PatientTypeTotalKeys;
+            const xKey = x as PatientTypeKeys;
+            return {
+              ...t,
+              [`Total Patient in ${PATIENT_TYPES[xKey]}`]: c[key],
+            };
+          }, {}),
+        },
+      ];
+    }, [] as any[]),
+  };
+};
+
+const LSGValueWithDelta = ({ value = 0, delta = 0 }) => {
+  const isDeltaPositive = delta > 0;
+  return (
+    <div>
+      <p>{value} </p>
+      {delta !== 0 && (
+        <span
+          className={clsx(
+            "flex items-center justify-end",
+            isDeltaPositive ? "text-green-500" : "text-red-500"
+          )}
+        >
+          {isDeltaPositive ? (
+            <ArrowUp className="inline-block" size={20} />
+          ) : (
+            <ArrowDown className="inline-block" size={20} />
+          )}
+          {delta}
+        </span>
+      )}
+    </div>
+  );
+};
+
 export const getLsgTableRows = (data: processLSGReturnType) => {
   const date = new Date();
   return data.reduce((a, c) => {
@@ -83,35 +134,16 @@ export const getLsgTableRows = (data: processLSGReturnType) => {
       ...a,
       {
         name: c.name,
-        live: c.total,
+        live: <LSGValueWithDelta value={c.total} delta={c.total_today} />,
         discharged: c.total_inactive,
         ...Object.keys(PATIENT_TYPES).reduce((acc, curr) => {
           const key = curr as PatientTypeKeys;
           const delta = c[`today_patients_${key}`] || 0;
           const value = c[`total_patients_${key}`];
-          const isDeltaPositive = delta > 0;
+
           return {
             ...acc,
-            [key]: (
-              <div key={key}>
-                <p>{value} </p>
-                {delta !== 0 && (
-                  <span
-                    className={clsx(
-                      "flex items-center justify-end",
-                      isDeltaPositive ? "text-green-500" : "text-red-500"
-                    )}
-                  >
-                    {isDeltaPositive ? (
-                      <ArrowUp className="inline-block" size={20} />
-                    ) : (
-                      <ArrowDown className="inline-block" size={20} />
-                    )}
-                    {delta}
-                  </span>
-                )}
-              </div>
-            ),
+            [key]: <LSGValueWithDelta key={key} value={value} delta={delta} />,
           };
         }, {}),
       },
