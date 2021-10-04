@@ -2,7 +2,7 @@ import React from "react";
 import { animated, config, useSpring } from "react-spring";
 
 interface ValuePillProps {
-  value: number;
+  value?: number;
   title?: string;
 }
 

@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import _ from "lodash";
+import _, { filter } from "lodash";
 import React from "react";
 import Link from "next/link";
 import { ProcessFacilityDataReturnType } from ".";
@@ -10,7 +10,8 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 export const processTestFacilitiesTriviaData = (
-  facility: ProcessFacilityDataReturnType
+  facility: ProcessFacilityDataReturnType,
+  filterDate?: string
 ) => {
   const initial = {
     current: _.cloneDeep(INITIAL_TEST_FACILITIES_TRIVIA),
@@ -18,7 +19,7 @@ export const processTestFacilitiesTriviaData = (
   };
 
   const getKey: (date: string) => keyof typeof initial = (date) =>
-    date === toDateString(new Date()) ? "current" : "previous";
+    date === (filterDate || toDateString(new Date())) ? "current" : "previous";
 
   return facility.reduce((a, c) => {
     const key = getKey(c.date);
@@ -46,10 +47,12 @@ export interface TestTableData {
   result_positive: number | null;
 }
 
-export const getTestTableData = (facility: ProcessFacilityDataReturnType) => {
-  const date = new Date();
+export const getTestTableData = (
+  facility: ProcessFacilityDataReturnType,
+  filterDate?: string
+) => {
   return facility.reduce((a, c) => {
-    if (c.date !== toDateString(date)) {
+    if (c.date !== (filterDate || toDateString(new Date()))) {
       return a;
     }
 
@@ -77,6 +80,38 @@ interface TestTableRowProps {
   facility_type: string | null;
   phone_number: string | null;
 }
+
+export const processTestExportData = (
+  facilityData: ProcessFacilityDataReturnType,
+  date: Date
+) => {
+  return {
+    filename: "tests_export.csv",
+    data: facilityData.reduce((a, c) => {
+      if (c.date !== toDateString(date)) {
+        return a;
+      }
+      return [
+        ...a,
+        {
+          "Hospital/CFLTC Name": c.name,
+          "Hospital/CFLTC Address": c.address,
+          "Govt/Pvt": c.facility_type.startsWith("Govt") ? "Govt" : "Pvt",
+          "Hops/CFLTC":
+            c.facility_type === "First Line Treatment Centre"
+              ? "CFLTC"
+              : "Hops",
+          Mobile: c.phone_number,
+          ...Object.keys(TESTS_TYPES).reduce((types, x) => {
+            const key = x as keyof typeof TESTS_TYPES;
+            return { ...types, [x]: c[key] };
+          }, {}),
+        },
+      ];
+    }, [] as any[]),
+  };
+};
+
 const TestTableRow: React.FC<TestTableRowProps> = ({
   id,
   name,
