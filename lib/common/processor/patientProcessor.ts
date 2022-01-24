@@ -92,6 +92,7 @@ export const processPatientExportData = (
           const copy = _.cloneDeep(acc);
           const key = cur as unknown as keyof typeof PATIENT_TYPES;
           copy[`Total Patient in ${PATIENT_TYPES[key]}`] =
+            //@ts-ignore
             c[`total_patients_${key}`];
 
           return copy;

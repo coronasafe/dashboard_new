@@ -4,7 +4,11 @@ import { ArrowDown, ArrowUp } from "react-feather";
 import { PatientTypeKeys, PatientTypeTotalKeys, processLSGReturnType } from ".";
 import { INITIAL_LSG_TRIVIA, PATIENT_TYPES } from "..";
 import { toDateString } from "../../../utils/parser";
-import { CareSummaryResponse, DistrictSummaryResponse } from "../../types";
+import {
+  CareSummaryResponse,
+  DistrictSummaryResponse,
+  DistrictPatientSummery,
+} from "../../types";
 
 export const processLSG = (summery: DistrictSummaryResponse) => {
   const filtered = summery.results
@@ -19,12 +23,14 @@ export const processLSG = (summery: DistrictSummaryResponse) => {
           total: _.keys(PATIENT_TYPES)
             .map(
               (k) =>
+                // @ts-ignore
                 data[typeKey][`total_patients_${k as PatientTypeKeys}`] || 0
             )
             .reduce((a, b) => a + b, 0),
           total_today: Object.keys(PATIENT_TYPES)
             .map(
               (k) =>
+                // @ts-ignore
                 data[typeKey][`today_patients_${k as PatientTypeKeys}`] || 0
             )
             .reduce((a, b) => a + b, 0),
@@ -56,7 +62,9 @@ export const processLSGTrivia = (
     const patientKeys = _.keys(PATIENT_TYPES) as (keyof typeof PATIENT_TYPES)[];
     acc[key].count += 1;
     patientKeys.forEach((type) => {
+      //@ts-ignore
       acc[key][type].today += curr[`today_patients_${type}`] || 0;
+      //@ts-ignore
       acc[key][type].total += curr[`total_patients_${type}`] || 0;
     });
 
@@ -138,7 +146,9 @@ export const getLsgTableRows = (data: processLSGReturnType) => {
         discharged: c.total_inactive,
         ...Object.keys(PATIENT_TYPES).reduce((acc, curr) => {
           const key = curr as PatientTypeKeys;
+          //@ts-ignore
           const delta = c[`today_patients_${key}`] || 0;
+          //@ts-ignore
           const value = c[`total_patients_${key}`];
 
           return {
