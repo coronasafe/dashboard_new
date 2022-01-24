@@ -22,6 +22,7 @@ import {
   GOVT_FACILITY_TYPES,
 } from "../../lib/common";
 import { toDateString } from "../../utils/parser";
+import { IconType } from "../../lib/common/processor";
 
 export interface FilterProps {
   initialFacilityType?: string[];
@@ -89,7 +90,7 @@ export const Filters: React.FC<FilterProps> = ({
         <div className="m-2">
           <Button
             layout="link"
-            iconRight={ChevronDown}
+            iconRight={ChevronDown as IconType}
             className="bg-gray-100 dark:bg-gray-900 w-full shadow-xs"
             onClick={() => setIsFacilityTypeOpen(true)}
           >
