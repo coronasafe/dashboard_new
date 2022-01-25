@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API } from "../common/constants";
 
 export interface FacilitySummary {
   facility: FacilityData;
@@ -239,7 +240,7 @@ const careSummary: CareSummary = async (
   end_date?
 ) => {
   return axios
-    .get(`https://dashboard.coronasafe.network/api/v1/${type}_summary`, {
+    .get(`${API}/api/v1/${type}_summary`, {
       params: {
         start_date,
         end_date,
@@ -250,12 +251,16 @@ const careSummary: CareSummary = async (
         Accept: "application/json",
       },
     })
-    .then((response) => response.data)
-    .catch((_) =>
+    .then((response) => {
+      return response.data;
+    })
+    .catch((e) => {
+      console.log(e);
       console.log(
-        "Something unknown happened when trying to make a network request"
-      )
-    );
+        "Something unknown happened when trying to make a network request",
+        e
+      );
+    });
 };
 export const districtSummery = async (
   district: string | number,
@@ -264,24 +269,24 @@ export const districtSummery = async (
   end_date?: string
 ): Promise<DistrictSummaryResponse> => {
   return axios
-    .get(
-      `https://dashboard.coronasafe.network/api/v1/district_patient_summary`,
-      {
-        params: {
-          start_date,
-          end_date,
-          district,
-          limit,
-        },
-        headers: {
-          Accept: "application/json",
-        },
-      }
-    )
-    .then((response) => response.data)
-    .catch((_) =>
+    .get(`${API}/api/v1/district_patient_summary`, {
+      params: {
+        start_date,
+        end_date,
+        district,
+        limit,
+      },
+      headers: {
+        Accept: "application/json",
+      },
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((e) =>
       console.log(
-        "Something unknown happened when trying to make a network request"
+        "Something unknown happened when trying to make a network request",
+        e
       )
     );
 };
@@ -293,7 +298,7 @@ const individualCareSummary: IndividualCareSummary = async (
   end_date?
 ) => {
   return axios
-    .get(`/api/v1/${type}_summary/`, {
+    .get(`${API}/api/v1/${type}_summary/`, {
       params: {
         start_date,
         end_date,

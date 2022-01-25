@@ -6,6 +6,7 @@ export const ACTIVATED_DISTRICTS = [
 ];
 
 export const GMAP_KEY = "AIzaSyDsBAc3y7deI5ZO3NtK5GuzKwtUzQNJNUk";
+export const API = "https://careapi.coronasafe.in";
 
 export const AVAILABILITY_TYPES_ORDERED = [
   1, 150, 10, 20, 30, 120, 110, 100, 40, 60, 50, 70,
